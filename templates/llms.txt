@@ -31,6 +31,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Testing Guide: /docs/testing - Writing test cases with pytest and TestClient.
 - CLI Tools Reference: /docs/cli-tools - Run, inspect, and benchmark commands.
 - Advanced Features: /docs/advanced-features - WSGI mounting, compat modes, multiple response models.
+- Monitoring Dashboard: /docs/monitoring - Health checks, traffic analysis, alerts.
 - Signals System: /docs/signals - Event-driven programming with signals.
 - JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
 - OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.

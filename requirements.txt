@@ -1,7 +1,7 @@
 fenrir-framework
 pydantic
 Jinja2
-mangum
-httpx
 markdown
 pygments
+python-dotenv
+httpx

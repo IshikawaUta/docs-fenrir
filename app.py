@@ -16,6 +16,14 @@ from fenrir import (
     CORSMiddleware,
     send_file,
 )
+from fenrir.features import init_fenrir_monitoring
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -26,10 +34,13 @@ logger = logging.getLogger("docs-fenrir")
 # ---------------------------------------------------------------------------
 # App
 # ---------------------------------------------------------------------------
-app = Fenrir(title="Fenrir Docs", version="3.0.0")
+app = Fenrir(title="Fenrir Docs", version="3.1.2")
 
 # CORS – allow all origins for a public documentation site
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
+
+# Monitoring Dashboard
+init_fenrir_monitoring(app)
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -69,6 +80,7 @@ SIDEBAR = [
     {"title": "Testing Guide", "id": "testing", "icon": "clipboard-list"},
     {"title": "CLI Tools Reference", "id": "cli-tools", "icon": "terminal"},
     {"title": "Advanced Features", "id": "advanced-features", "icon": "sliders"},
+    {"title": "Monitoring Dashboard", "id": "monitoring", "icon": "activity"},
     {"title": "Signals System", "id": "signals", "icon": "radio"},
     {"title": "JSON Provider", "id": "json-provider", "icon": "braces"},
     {"title": "OpenAPI Customization", "id": "openapi-customization", "icon": "file-text"},

@@ -215,7 +215,7 @@ Use `Annotated` with `Query`, `Body`, and other parameter markers:
 ```python
 from typing import Annotated
 from fenrir import MethodView
-from fenrir.params import Query, Body
+from fenrir import Query, Body
 
 class SearchView(MethodView):
     async def get(self, q: Annotated[str, Query()], limit: Annotated[int, Query()] = 10):
@@ -247,9 +247,9 @@ class ExportView(MethodView):
 ```python
 from fenrir import Fenrir, MethodView, request
 from typing import Annotated
-from fenrir.params import Query, Body
+from fenrir import Query, Body
 
-app = Falcon()
+app = Fenrir()
 
 class ItemListView(MethodView):
     async def get(self, limit: Annotated[int, Query()] = 20):

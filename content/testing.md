@@ -344,7 +344,7 @@ Register custom error handlers and verify they respond correctly:
 
 ```python
 from fenrir import Fenrir
-from fenrir.exceptions import HTTPNotFoundException
+from fenrir import HTTPNotFound
 from fenrir.testing import TestClient
 
 app = Fenrir()
@@ -352,7 +352,7 @@ app = Fenrir()
 @app.get("/users/{user_id}")
 async def get_user(user_id: int):
     if user_id == 0:
-        raise HTTPNotFoundException(detail="User not found")
+        raise HTTPNotFound(detail="User not found")
     return {"id": user_id, "name": "Test User"}
 
 @app.register_error_handler(404)
@@ -369,7 +369,7 @@ async def test_not_found():
 @pytest.mark.asyncio
 async def test_not_found_by_exception_class():
     """Error handlers can also be keyed by exception class."""
-    @app.register_error_handler(HTTPNotFoundException)
+    @app.register_error_handler(HTTPNotFound)
     async def handle_not_found(request, exc):
         return {"error": "not_found", "detail": exc.detail}, 404
 
@@ -491,8 +491,8 @@ async def create_user(data: dict):
 @app.get("/users/{user_id}")
 async def get_user(user_id: int):
     if user_id == 0:
-        from fenrir.exceptions import HTTPNotFoundException
-        raise HTTPNotFoundException("User not found")
+        from fenrir import HTTPNotFound
+        raise HTTPNotFound("User not found")
     return {"id": user_id, "name": "Alice"}
 
 # --- Fixtures ---

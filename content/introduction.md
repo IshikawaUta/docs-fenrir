@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to **Fenrir**, a hybrid Python web framework that unifies the best patterns from Flask, FastAPI, Falcon, Sanic, and Bottle into a single, high-performance ASGI application. Fenrir v3.0.0 delivers 88 exported symbols across routing, dependency injection, middleware, security, sessions, and CLI tooling—eliminating the need to choose between paradigms.
+Welcome to **Fenrir**, a hybrid Python web framework that unifies the best patterns from Flask, FastAPI, Falcon, Sanic, and Bottle into a single, high-performance ASGI application. Fenrir v3.1.2 delivers 94 exported symbols across routing, dependency injection, middleware, security, sessions, and CLI tooling—eliminating the need to choose between paradigms.
 
 ---
 
@@ -12,7 +12,7 @@ Fenrir embraces **Framework Hybridization**: rather than enforcing a single arch
 
 ## Architecture
 
-Fenrir v3.0.0 is organized around two core modules and a trie-based router:
+Fenrir v3.1.2 is organized around two core modules and a trie-based router:
 
 - **`_app_core.py`** — Application initialization, middleware registration, blueprint mounting, and lifecycle hooks.
 - **`_app_dispatch.py`** — ASGI dispatch pipeline: request parsing, handler execution, response coercion, and error handling.
@@ -124,6 +124,7 @@ Fenrir provides a built-in CLI (`fenrir`):
 | `fenrir bench` | Simple request benchmarking |
 | `fenrir new` | Scaffold a new project from a template |
 | `fenrir info` | Display app and environment information |
+| `fenrir monitoring` | Enable, disable, or configure the monitoring dashboard |
 
 ---
 

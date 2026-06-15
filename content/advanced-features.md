@@ -430,15 +430,15 @@ Register custom error handlers for exceptions or HTTP status codes:
 
 ```python
 @app.exception(404)
-async def not_found(exc):
+async def not_found(req, exc):
     return JSONResponse({"error": "Not found"}, status_code=404)
 
 @app.exception(ValueError, TypeError)
-async def handle_value_error(exc):
+async def handle_value_error(req, exc):
     return JSONResponse({"error": str(exc)}, status_code=400)
 
 @app.exception(500)
-async def server_error(exc):
+async def server_error(req, exc):
     return JSONResponse({"error": "Internal server error"}, status_code=500)
 ```
 

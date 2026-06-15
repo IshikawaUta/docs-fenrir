@@ -9,7 +9,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="3.0.0",
+    version="3.1.2",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
@@ -180,7 +180,7 @@ These defaults are set when a `Fenrir` application is created:
 | `SESSION_COOKIE_DOMAIN` | `None` | Domain scope for the session cookie. |
 | `SESSION_COOKIE_PATH` | `"/"` | Path scope for the session cookie. |
 | `SESSION_COOKIE_HTTPONLY` | `True` | Restrict cookie to HTTP-only access. |
-| `SESSION_COOKIE_SECURE` | `True` | Require HTTPS for the session cookie. |
+| `SESSION_COOKIE_SECURE` | `False` | Require HTTPS for the session cookie. |
 | `SESSION_COOKIE_SAMESITE` | `None` | SameSite attribute for the session cookie. |
 
 ## App Attributes

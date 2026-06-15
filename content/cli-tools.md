@@ -140,13 +140,13 @@ fenrir shell myapp.py
 ### Sample Session
 
 ```
-Fenrir 3.0.0 Interactive Shell
+Fenrir 3.1.2 Interactive Shell
 App: My App [/docs]
 Available in context: 'app', 'request', 'g', 'Response', 'JSONResponse', 'HTMLResponse', 'Blueprint'
 >>> app.title
 'My App'
 >>> app.version
-'3.0.0'
+'3.1.2'
 >>> list(app.router.routes)
 [<Route GET / >, <Route GET /api/users >]
 ```
@@ -281,7 +281,7 @@ fenrir info myapp.py
 =============================================
 SYSTEM ENVIRONMENT
 =============================================
-Fenrir version:      3.0.0
+Fenrir version:      3.1.2
 Python version:      3.11.0
 Python executable:   /usr/bin/python3
 OS Platform:         Linux 6.1.0
@@ -291,7 +291,7 @@ Asteri installed:    Yes (v2.3.2)
 APPLICATION DETAILS
 =============================================
 App Title:           My App
-App Version:         3.0.0
+App Version:         3.1.2
 HTTP Routes:         10
 WebSocket Routes:    2
 Middlewares:         1
@@ -300,6 +300,59 @@ Compat Layers Active: None active in process
 ```
 
 The **Compat Layers Active** field shows which framework compatibility layers are loaded in the current process (Flask, FastAPI, Bottle, Falcon, Sanic).
+
+---
+
+## `fenrir monitoring`
+
+Manage the built-in monitoring dashboard for health checks and traffic analysis.
+
+```bash
+fenrir monitoring <action>
+```
+
+| Action | Description |
+|--------|-------------|
+| `enable` | Enable the monitoring dashboard |
+| `disable` | Disable the monitoring dashboard |
+| `status` | Show monitoring configuration status |
+| `set-password` | Set a new dashboard password |
+
+### Examples
+
+```bash
+# Enable monitoring
+fenrir monitoring enable
+
+# Disable monitoring
+fenrir monitoring disable
+
+# Check monitoring status
+fenrir monitoring status
+
+# Set a new password (interactive prompt)
+fenrir monitoring set-password
+```
+
+### Environment Variables
+
+Configure monitoring via environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MONITORING_ENABLED` | `false` | Enable/disable monitoring |
+| `MONITORING_USER` | `admin` | Dashboard username |
+| `MONITORING_PASSWORD` | `changeme` | Dashboard password |
+| `MONITORING_SECRET_KEY` | (auto-generated) | Secret key for session signing |
+| `MONITORING_SITES` | `http://localhost:8000` | Comma-separated list of sites to monitor |
+| `MONITORING_CHECK_INTERVAL` | `60` | Health check interval in seconds |
+
+### Default Credentials
+
+- **Username:** `admin`
+- **Password:** `changeme`
+
+> **Warning:** Change the default password before deploying to production.
 
 ---
 

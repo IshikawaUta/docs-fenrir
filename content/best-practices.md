@@ -1,6 +1,6 @@
 # Best Practices
 
-This guide outlines recommended patterns for building production-ready Fenrir v3.0.0 applications.
+This guide outlines recommended patterns for building production-ready Fenrir v3.1.2 applications.
 
 ---
 

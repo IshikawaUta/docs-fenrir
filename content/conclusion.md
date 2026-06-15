@@ -12,6 +12,89 @@ Happy coding! 🐺
 
 ---
 
+### v3.1.2 — Security & Bug Fix Release
+
+**Security Fixes (Critical)**
+
+- Fixed monitoring dashboard authentication bypass — token validation now enforced on all endpoints.
+- All monitoring API endpoints now require authentication.
+- Fixed XSS vulnerabilities in monitoring dashboard HTML output via `html.escape()`.
+- Added CSRF protection to monitoring login form.
+- Fixed OpenAPI Swagger/ReDoc XSS via `html.escape()` on `openapi_url` and title.
+- Fixed `Content-Disposition` header injection via unescaped filename sanitization.
+- Added token expiration (24 hours) for monitoring sessions.
+
+**Bug Fixes**
+
+- Fixed `.env` file not loaded when running via `fenrir` CLI.
+- Fixed `response-times` API endpoint passing wrong argument.
+- Fixed `int()` conversion without error handling causing 500 errors.
+- Fixed config environment vars ignored when `enabled=True` passed.
+- Fixed `body.decode()` crash on non-UTF-8 request bodies.
+- Fixed default secret key hardcoded — now generates random if not set.
+- Fixed `JSONResponse` import error when used outside request context.
+- Fixed `session.pop()` always marking session as modified.
+- Fixed Redis session async deadlock with proper timeout error handling.
+- Fixed `_load_data()` overwriting sites configuration.
+- Fixed CSRF cookie path (now set to `/` for proper scope).
+- Fixed CSRF token not refreshed on failed login attempts.
+
+**Improvements**
+
+- Added `html.escape()` for all monitoring dashboard HTML output.
+- Added `try/except` for query parameter `int` conversions.
+- Added secure cookie flag support via `MONITORING_SECURE_COOKIES` env var.
+- Added health check URL validation (only configured sites allowed).
+- Added error handling for disk write failures in monitoring data.
+- Added warning when default password is used.
+- Added parallel health checks using `asyncio.gather()`.
+- Added JavaScript `escapeHtml()` for client-side DOM injection.
+- Added `MONITORING_ALLOW_DEFAULT_PASSWORD` env var override.
+- Added OSError handling for monitoring data directory creation.
+- Added `send_file()` streaming for large files via `FileResponse`.
+- Added `DefaultJSONProvider` fallback for `JSONResponse` outside request context.
+- Added CSRF token regeneration on login failures.
+- Added monitoring login form with proper error handling.
+- Added random secret key generation with warning.
+
+**Tests**
+
+- Added 37 new tests (706 total, up from 669).
+- Fixed deprecated per-request cookies in httpx.
+
+### v3.1.1 — Bug Fix Release
+
+**Bug Fixes:**
+
+- Fixed `fenrir.monitoring` subpackage not included in package distribution (`pyproject.toml` packages list).
+
+### v3.1.0 — Monitoring Features
+
+Added built-in monitoring dashboard:
+
+**New Features:**
+
+- Monitoring dashboard with health checks, traffic analysis, and alerts
+- CLI commands for enable/disable monitoring (`fenrir monitoring enable|disable|status|set-password`)
+- `bcrypt` password hashing for secure authentication
+- Async health checks using thread pool
+- Uptime statistics endpoint (`/monitoring/api/uptime`)
+- Response time history endpoint (`/monitoring/api/response-times`)
+- Hourly traffic breakdown endpoint (`/monitoring/api/hourly`)
+- Comprehensive summary endpoint (`/monitoring/api/summary`)
+- Enhanced dashboard with uptime percentage display
+- `--disable-dashboard` flag for Asteri built-in dashboard
+- `init_fenrir_monitoring(app)` convenience function from `fenrir.features`
+
+**Bug Fixes:**
+
+- Fixed unused import in monitoring routes
+- Fixed invalid integer parsing in alerts API
+- Fixed blocking call in health check (now async)
+- Fixed Response constructor parameter mismatch
+
+---
+
 ### v3.0.0 — Major Bug Fix & Architecture Release
 
 Fixed 21 bugs, added 46 new tests, and introduced architecture improvements:
