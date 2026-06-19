@@ -163,3 +163,87 @@ async def upload_modify(file: UploadFile = File(...)):
 
     return {"modified_size": len(modified)}
 ```
+
+---
+
+## Serving Files
+
+### send_file
+
+Send a file from the filesystem as a response. Automatically detects MIME type.
+
+```python
+from fenrir import send_file
+
+@app.get("/download/<filename>")
+async def download(filename: str):
+    return send_file(f"uploads/{filename}")
+
+# As attachment (forces download)
+@app.get("/attachment/<filename>")
+async def attachment(filename: str):
+    return send_file(f"uploads/{filename}", as_attachment=True)
+
+# With custom MIME type
+@app.get("/data")
+async def data_file():
+    return send_file("data.bin", mimetype="application/octet-stream")
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `path_or_file` | `str \| File` | *required* | File path string or file-like object |
+| `mimetype` | `str` | `None` | MIME type (auto-detected if omitted) |
+| `as_attachment` | `bool` | `False` | Force download with `Content-Disposition: attachment` |
+| `download_name` | `str` | `None` | Filename for the `Content-Disposition` header |
+
+### send_from_directory
+
+Send a file from a specific directory with path traversal protection.
+
+```python
+from fenrir import send_from_directory
+
+@app.get("/static/<path:filename>")
+async def serve_static(filename: str):
+    return send_from_directory("static", filename)
+
+@app.get("/uploads/<path:filename>")
+async def serve_upload(filename: str):
+    return send_from_directory("uploads", filename)
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `directory` | `str` | *required* | Directory path to serve files from |
+| `path` | `str` | *required* | Relative file path within the directory |
+| `**kwargs` | | | Additional arguments passed to `send_file` |
+
+---
+
+## Redirect Helper
+
+The `redirect` function returns a `RedirectResponse` with path resolution for relative URLs.
+
+```python
+from fenrir import redirect
+
+@app.get("/old-page")
+async def old_page():
+    return redirect("/new-page")  # 302 redirect
+
+@app.get("/login")
+async def login():
+    return redirect("/dashboard", code=303)  # 303 redirect after POST
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `location` | `str` | *required* | URL to redirect to |
+| `code` | `int` | `302` | HTTP redirect status code |

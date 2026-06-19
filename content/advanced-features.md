@@ -1,5 +1,29 @@
 # Advanced Features
 
+### Dev Mode Debug Pages
+
+Enable detailed debug pages with stack traces, source context, and vendor frame toggling for development:
+
+```python
+from fenrir import Fenrir
+
+# Enable via constructor parameter
+app = Fenrir(dev_mode=True)
+
+# Or via environment variable
+# FENRIR_DEV_MODE=1 fenrir run app:app
+```
+
+When an unhandled exception occurs in dev mode, Fenrir renders a beautiful debug page showing:
+
+- Full stack trace with syntax-highlighted source code
+- Local variables at each frame
+- Source context (surrounding lines) for each frame
+- Vendor frame toggle (hide/show library internals)
+- Request details (method, path, headers, query params)
+
+> **Warning:** Never enable `dev_mode` in production — it exposes sensitive information including source code, variable values, and internal paths.
+
 ### WSGI Application Mounting
 
 Mount legacy WSGI applications:

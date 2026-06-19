@@ -121,3 +121,6 @@ active_env.xml
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# fenrir monitoring data
+.fenrir_monitoring

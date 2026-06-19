@@ -23,3 +23,9 @@ pip install -e .
 - `itsdangerous>=2.0.0`
 - `python-multipart>=0.0.18`
 - `typing_extensions>=4.0.0`
+- `bcrypt>=4.0.0`
+- `python-dotenv>=1.0.0`
+
+### Optional Dependencies
+
+- `redis>=4.0.0` — Required for `RedisSessionInterface` and distributed rate limiting

@@ -15,8 +15,8 @@ fenrir run <target> [options]
 | `--host` | `-H` | `127.0.0.1` | Host address to bind to |
 | `--port` | `-p` | `8000` | Port to serve on |
 | `--workers` | `-w` | `1` | Number of worker processes |
-| `--dev` | `-d` | `false` | Development mode with auto-reload on file changes |
-| `--reload` | | `false` | Restart workers on code changes (same effect as `--dev`) |
+| `--dev` | `-d` | `false` | Development mode with auto-reload and debug pages (sets `FENRIR_DEV_MODE=1`) |
+| `--reload` | | `false` | Restart workers on code changes (same effect as `--dev` without debug pages) |
 
 The `target` argument specifies the application module and variable in `module:variable` format (e.g. `app:app`), or a direct `.py` file path (e.g. `app.py`).
 
@@ -140,13 +140,13 @@ fenrir shell myapp.py
 ### Sample Session
 
 ```
-Fenrir 3.1.2 Interactive Shell
+Fenrir 3.1.3 Interactive Shell
 App: My App [/docs]
 Available in context: 'app', 'request', 'g', 'Response', 'JSONResponse', 'HTMLResponse', 'Blueprint'
 >>> app.title
 'My App'
 >>> app.version
-'3.1.2'
+'3.1.3'
 >>> list(app.router.routes)
 [<Route GET / >, <Route GET /api/users >]
 ```
@@ -281,7 +281,7 @@ fenrir info myapp.py
 =============================================
 SYSTEM ENVIRONMENT
 =============================================
-Fenrir version:      3.1.2
+Fenrir version:      3.1.3
 Python version:      3.11.0
 Python executable:   /usr/bin/python3
 OS Platform:         Linux 6.1.0
@@ -291,7 +291,7 @@ Asteri installed:    Yes (v2.3.2)
 APPLICATION DETAILS
 =============================================
 App Title:           My App
-App Version:         3.1.2
+App Version:         3.1.3
 HTTP Routes:         10
 WebSocket Routes:    2
 Middlewares:         1

@@ -12,71 +12,95 @@ Happy coding! 🐺
 
 ---
 
-### v3.1.2 — Security & Bug Fix Release
+### v3.1.3 — Dev Mode Debug Page & Error Handling
 
-**Security Fixes (Critical)**
+**New Features**
 
-- Fixed monitoring dashboard authentication bypass — token validation now enforced on all endpoints.
-- All monitoring API endpoints now require authentication.
-- Fixed XSS vulnerabilities in monitoring dashboard HTML output via `html.escape()`.
-- Added CSRF protection to monitoring login form.
-- Fixed OpenAPI Swagger/ReDoc XSS via `html.escape()` on `openapi_url` and title.
-- Fixed `Content-Disposition` header injection via unescaped filename sanitization.
-- Added token expiration (24 hours) for monitoring sessions.
+- Laravel-style dev mode debug page (`--dev` flag or `FENRIR_DEV_MODE=1` env var)
+- Debug page with sidebar, tabs (Stack Trace / Request / Raw Trace), and collapsible frames
+- ASGI middleware errors now caught and displayed on debug page
+- Dev mode overrides custom exception handlers for full debug info
+- Client info detection: scope → X-Forwarded-For → X-Real-IP → Host header
+- XSS protection via `html.escape()` on all user-controlled values
+- Responsive design for mobile (768px and 480px breakpoints)
+- Vendor frame toggle with frame count
 
 **Bug Fixes**
 
-- Fixed `.env` file not loaded when running via `fenrir` CLI.
-- Fixed `response-times` API endpoint passing wrong argument.
-- Fixed `int()` conversion without error handling causing 500 errors.
-- Fixed config environment vars ignored when `enabled=True` passed.
-- Fixed `body.decode()` crash on non-UTF-8 request bodies.
-- Fixed default secret key hardcoded — now generates random if not set.
-- Fixed `JSONResponse` import error when used outside request context.
-- Fixed `session.pop()` always marking session as modified.
-- Fixed Redis session async deadlock with proper timeout error handling.
-- Fixed `_load_data()` overwriting sites configuration.
-- Fixed CSRF cookie path (now set to `/` for proper scope).
-- Fixed CSRF token not refreshed on failed login attempts.
-
-**Improvements**
-
-- Added `html.escape()` for all monitoring dashboard HTML output.
-- Added `try/except` for query parameter `int` conversions.
-- Added secure cookie flag support via `MONITORING_SECURE_COOKIES` env var.
-- Added health check URL validation (only configured sites allowed).
-- Added error handling for disk write failures in monitoring data.
-- Added warning when default password is used.
-- Added parallel health checks using `asyncio.gather()`.
-- Added JavaScript `escapeHtml()` for client-side DOM injection.
-- Added `MONITORING_ALLOW_DEFAULT_PASSWORD` env var override.
-- Added OSError handling for monitoring data directory creation.
-- Added `send_file()` streaming for large files via `FileResponse`.
-- Added `DefaultJSONProvider` fallback for `JSONResponse` outside request context.
-- Added CSRF token regeneration on login failures.
-- Added monitoring login form with proper error handling.
-- Added random secret key generation with warning.
+- Fixed `dev_mode=False` overriding env var (changed default to `None`)
+- Fixed `os.environ` leak between tests in CLI
+- Fixed `html.escape()` crash on non-string detail (pydantic validation)
 
 **Tests**
 
-- Added 37 new tests (706 total, up from 669).
-- Fixed deprecated per-request cookies in httpx.
+- Added 42 new tests covering dev mode, ASGI middleware errors, responsive CSS, XSS, and client info
+- Total test count: 748 (up from 706)
+
+---
+
+### v3.1.2 — Security & Bug Fix Release
+
+**Security Fixes**
+
+- Fixed monitoring dashboard authentication bypass (token validation)
+- Added authentication to all monitoring API endpoints
+- Fixed XSS vulnerabilities in monitoring dashboard HTML output
+- Added CSRF protection on monitoring login form
+- Fixed OpenAPI Swagger/ReDoc XSS via `openapi_url` parameter
+- Fixed Content-Disposition header injection via unescaped filename
+- Added token expiration (24 hours) for monitoring sessions
+
+**Bug Fixes**
+
+- Fixed `.env` file not loaded when running via `fenrir` CLI (vs `python -m fenrir.cli`)
+- Fixed `response-times` API endpoint passing wrong argument to function
+- Fixed `int()` conversion without error handling causing 500 errors
+- Fixed config environment vars ignored when `enabled=True` passed
+- Fixed `body.decode()` crash on non-UTF-8 request bodies
+- Fixed default secret key hardcoded (now generates random if not set)
+- Fixed JSONResponse import error when used outside request context
+- Fixed `session.pop()` always marking session as modified
+- Fixed Redis session async deadlock with proper timeout error
+- Fixed `_load_data()` overwriting sites configuration
+- Fixed CSRF cookie not being sent back (changed path to `/`)
+- Fixed CSRF token not refreshed on failed login attempts
+
+**Improvements**
+
+- Added `html.escape()` for all monitoring dashboard HTML output
+- Added `try/except` for query parameter int conversions
+- Added Secure cookie flag support via `MONITORING_SECURE_COOKIES` env var
+- Added health check URL validation (only configured sites allowed)
+- Added error handling for disk write failures in monitoring data
+- Added warning when default password is used
+- Added parallel health checks using `asyncio.gather()`
+- Added JavaScript `escapeHtml()` for client-side DOM injection
+- Added `MONITORING_ALLOW_DEFAULT_PASSWORD` env var override
+- Added OSError handling for monitoring data directory creation
+- Added `send_file()` streaming for large files via `FileResponse`
+- Added `DefaultJSONProvider` fallback for `JSONResponse` outside request context
+
+**Tests**
+
+- Added 37 new tests covering security fixes and edge cases
+- Fixed all test warnings (deprecated per-request cookies in httpx)
+- Total test count: 706 (up from 669)
 
 ### v3.1.1 — Bug Fix Release
 
 **Bug Fixes:**
 
-- Fixed `fenrir.monitoring` subpackage not included in package distribution (`pyproject.toml` packages list).
+- Fixed `fenrir.monitoring` subpackage not included in package distribution (`pyproject.toml` packages list)
 
 ### v3.1.0 — Monitoring Features
 
 Added built-in monitoring dashboard:
 
-**New Features:**
+**New Features**
 
 - Monitoring dashboard with health checks, traffic analysis, and alerts
-- CLI commands for enable/disable monitoring (`fenrir monitoring enable|disable|status|set-password`)
-- `bcrypt` password hashing for secure authentication
+- CLI commands for enable/disable monitoring
+- bcrypt password hashing for secure authentication
 - Async health checks using thread pool
 - Uptime statistics endpoint (`/monitoring/api/uptime`)
 - Response time history endpoint (`/monitoring/api/response-times`)
@@ -84,9 +108,8 @@ Added built-in monitoring dashboard:
 - Comprehensive summary endpoint (`/monitoring/api/summary`)
 - Enhanced dashboard with uptime percentage display
 - `--disable-dashboard` flag for Asteri built-in dashboard
-- `init_fenrir_monitoring(app)` convenience function from `fenrir.features`
 
-**Bug Fixes:**
+**Bug Fixes**
 
 - Fixed unused import in monitoring routes
 - Fixed invalid integer parsing in alerts API
@@ -161,21 +184,18 @@ Fixed 21 bugs, added 46 new tests, and introduced architecture improvements:
 
 ### v2.3.5 — Bug Fix & Changelog Update
 
-- Updated changelog to accurately reflect version history.
-- All version references synchronized across codebase.
-
----
+- Updated changelog to accurately reflect version history
+- All version references synchronized across codebase
 
 ### v2.3.4 — Bug Fix Release
 
-- Fixed server crash: `fenrir run` was passing wrong `app_path` (`fenrir.app:_active_app`) to Asteri worker, causing `'NoneType' object is not callable`.
-- Fixed Python 3.8 support: replaced `asyncio.to_thread` with `fenrir.compat.to_thread` shim.
-
----
+- Fix server crash: `fenrir run` was passing wrong `app_path` (`fenrir.app:_active_app`) to Asteri worker, causing `'NoneType' object is not callable`
+- Fix Python 3.8 support: replaced `asyncio.to_thread` with `fenrir.compat.to_thread` shim
+- Updated all version strings across codebase
 
 ### v2.3.3 — 🚫 Retracted
 
-- Published with incomplete version updates, superseded by v2.3.4.
+- Published with incomplete version updates, superseded by v2.3.4
 
 ---
 
@@ -324,3 +344,9 @@ Five test failures on Python 3.8 CI were identified and patched:
 - Premium CLI tooling (`run`, `routes`, `shell`, `bench`, `new`, `info`).
 - Auto-generated OpenAPI/Swagger documentation.
 - WebSocket and Server-Sent Events support.
+
+---
+
+## License
+
+Fenrir is open-sourced software licensed under the [MIT License](https://opensource.org/licenses/MIT).

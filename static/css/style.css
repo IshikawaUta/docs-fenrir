@@ -827,6 +827,16 @@ a {
     .status-bar {
         display: none !important;
     }
+
+    .announcement-bar {
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 16px;
+    }
+
+    .announcement-bar a {
+        margin-left: 0;
+    }
     
     .sidebar-overlay {
         display: none;

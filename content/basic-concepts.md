@@ -7,7 +7,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="3.1.2",
+    version="3.1.3",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
@@ -19,7 +19,7 @@ app = Fenrir(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `title` | `str` | `"Fenrir API"` | Application title (shown in OpenAPI docs) |
-| `version` | `str` | `"3.1.2"` | Application version |
+| `version` | `str` | `"3.1.3"` | Application version |
 | `docs_url` | `str` | `"/docs"` | Swagger UI endpoint path (`None` to disable) |
 | `redoc_url` | `str` | `"/redoc"` | ReDoc endpoint path (`None` to disable) |
 | `openapi_url` | `str` | `"/openapi.json"` | OpenAPI schema endpoint path (`None` to disable) |
@@ -30,6 +30,7 @@ app = Fenrir(
 | `instance_relative_config` | `bool` | `False` | Whether config is loaded relative to instance_path |
 | `strict_content_type` | `bool` | `False` | Require `application/json` content-type for JSON bodies |
 | `route_class` | `Type[Route]` | `None` | Custom route class for the router |
+| `dev_mode` | `bool` | `None` | Enable debug pages with stack traces (auto-enabled from `FENRIR_DEV_MODE=1` env var) |
 
 ```python
 app = Fenrir(
@@ -66,10 +67,12 @@ app.dependency_overrides      # Dict — DI overrides for testing
 ```
 
 ```python
-# Debug mode
-app.config["DEBUG"] = True
+# Debug mode (enables debug pages with stack traces)
+app = Fenrir(dev_mode=True)
+# Or via environment variable: FENRIR_DEV_MODE=1
 
 # Configuration
+app.config["DEBUG"] = True
 app.config["SECRET_KEY"] = "my-secret"
 app.config["DATABASE_URL"] = "postgresql://localhost/mydb"
 

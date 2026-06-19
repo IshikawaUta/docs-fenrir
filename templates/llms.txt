@@ -1,4 +1,4 @@
-# Fenrir Web Framework
+# Fenrir Web Framework v3.1.3
 
 Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri.
 
@@ -7,10 +7,10 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Installation: /docs/installation - Package requirements and how to install.
 - Project Structure: /docs/project-structure - Recommended file and directory layouts.
 - Quick Start Guide: /docs/quick-start - Hello World walkthrough.
-- Basic Concepts: /docs/basic-concepts - Framework foundations.
+- Basic Concepts: /docs/basic-concepts - Framework foundations, constructor params, dev_mode.
 - Routing System: /docs/routing - How routing, path params, and regex works.
 - Request & Response: /docs/request-response - Accessing headers, variables, custom responses.
-- Dependency Injection: /docs/dependency-injection - Using Depends decorator.
+- Dependency Injection: /docs/dependency-injection - Using Depends, yield deps, circular detection, overrides.
 - Data Validation: /docs/data-validation - Pydantic models integration.
 - Context Locals: /docs/context-locals - Request, session, and global context variables.
 - Class-Based Resources: /docs/class-based-resources - Falcon-style class resources.
@@ -25,18 +25,19 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Sessions: /docs/sessions - Secure cookie, in-memory, and Redis session backends.
 - Pagination: /docs/pagination - Paginated list responses.
 - Background Tasks: /docs/background-tasks - Running background workers.
-- Authentication & Security: /docs/authentication-security - API keys, JWT, Bearer tokens, OAuth2, OpenID Connect.
+- Authentication & Security: /docs/authentication-security - API keys, JWT, Bearer tokens, OAuth2, OpenID Connect, WebSocket auth.
 - Blueprints: /docs/blueprints - Routing modularization.
 - Configuration: /docs/configuration - App settings and environment variables.
 - Testing Guide: /docs/testing - Writing test cases with pytest and TestClient.
-- CLI Tools Reference: /docs/cli-tools - Run, inspect, and benchmark commands.
-- Advanced Features: /docs/advanced-features - WSGI mounting, compat modes, multiple response models.
-- Monitoring Dashboard: /docs/monitoring - Health checks, traffic analysis, alerts.
+- CLI Tools Reference: /docs/cli-tools - Run, inspect, benchmark, monitoring, info commands.
+- Advanced Features: /docs/advanced-features - Dev mode, WSGI mounting, compat modes, multiple response models, connection pooling.
+- Monitoring Dashboard: /docs/monitoring - Health checks, traffic analysis, alerts, low-level monitoring API.
 - Signals System: /docs/signals - Event-driven programming with signals.
 - JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
 - OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.
 - Best Practices: /docs/best-practices - Performance, security, type hints.
-- Conclusion: /docs/conclusion - Closing notes and changelog.
+- Framework Comparison: /docs/comparison - Fenrir vs Flask vs FastAPI vs Sanic vs Falcon vs Bottle.
+- Conclusion: /docs/conclusion - Closing notes and full changelog.
 
 ## Technical Specifications
 - Support for FastAPI-style decorators and Pydantic validation.
@@ -51,4 +52,9 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Signal system for event-driven programming.
 - Pluggable JSON serialization with tagged types.
 - Auto-generated OpenAPI 3.0.3 schema with Swagger UI and ReDoc.
+- Dev mode debug pages with stack traces and source context.
+- CSRF protection middleware with automatic token generation.
+- Database connection pooling with retry logic.
+- HTTP/2 server push support.
+- Framework compatibility layers: Bottle, Falcon, Sanic.
 - Powered by high-speed Asteri ASGI server.

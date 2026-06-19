@@ -1,6 +1,6 @@
 # Monitoring Dashboard
 
-Fenrir v3.1.2 includes a built-in monitoring dashboard for tracking application health, traffic analysis, and alerts. The dashboard is powered by `fenrir.features.init_fenrir_monitoring()` and provides both a web UI and REST API endpoints.
+Fenrir v3.1.3 includes a built-in monitoring dashboard for tracking application health, traffic analysis, and alerts. The dashboard is powered by `fenrir.features.init_fenrir_monitoring()` and provides both a web UI and REST API endpoints.
 
 ---
 
@@ -12,7 +12,7 @@ Fenrir v3.1.2 includes a built-in monitoring dashboard for tracking application 
 from fenrir import Fenrir
 from fenrir.features import init_fenrir_monitoring
 
-app = Fenrir(title="My App", version="3.1.2")
+app = Fenrir(title="My App", version="3.1.3")
 
 # Enable the monitoring dashboard
 init_fenrir_monitoring(app)
@@ -201,7 +201,7 @@ from fenrir.features import init_fenrir_monitoring
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("myapp")
 
-app = Fenrir(title="Production App", version="3.1.2")
+app = Fenrir(title="Production App", version="3.1.3")
 
 # Configure monitoring via environment
 # Or pass configuration directly:
@@ -260,6 +260,114 @@ This file contains:
 - Health check history
 - Alert records
 - Configuration state
+
+---
+
+## Low-Level Monitoring API
+
+These functions are exported from `fenrir` for direct use in custom monitoring integrations.
+
+### `init_monitoring(app, config=None)`
+
+Initialize the monitoring system and register all monitoring routes on the app. This is the lower-level function called by `init_fenrir_monitoring()`.
+
+```python
+from fenrir import Fenrir, init_monitoring
+
+app = Fenrir()
+
+# Initialize monitoring directly (without .env auto-loading)
+init_monitoring(app, config={
+    "enabled": True,
+    "user": "admin",
+    "password": "secure-password",
+    "secret_key": "my-secret",
+    "sites": ["http://localhost:8000"],
+    "check_interval": 60,
+})
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `app` | `Fenrir` | *required* | The Fenrir application instance |
+| `config` | `dict \| None` | `None` | Configuration dict (falls back to env vars) |
+
+### `record_request(path, method, status_code, response_time)`
+
+Record a request for traffic tracking. Called automatically by the monitoring middleware.
+
+```python
+from fenrir import record_request
+
+# Manually record a request
+record_request(
+    path="/api/users",
+    method="GET",
+    status_code=200,
+    response_time=45.2  # milliseconds
+)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | `str` | The request path |
+| `method` | `str` | HTTP method (GET, POST, etc.) |
+| `status_code` | `int` | Response status code |
+| `response_time` | `float` | Response time in milliseconds |
+
+### `check_site_health(url)`
+
+Synchronously check the health of a single site. Returns a dict with status information.
+
+```python
+from fenrir import check_site_health
+
+result = check_site_health("http://localhost:8000")
+print(result)
+# {"url": "http://localhost:8000", "status": "up", "response_time": 45.2, "status_code": 200}
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `url` | `str` | The site URL to check |
+
+**Returns:** `Dict[str, Any]` with `url`, `status`, `response_time`, and `status_code` fields.
+
+### `check_site_health_async(url)`
+
+Asynchronously check the health of a single site using a thread pool. Preferred for use inside async handlers.
+
+```python
+from fenrir import check_site_health_async
+
+@app.get("/health-check")
+async def health_check():
+    result = await check_site_health_async("http://localhost:8000")
+    return result
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `url` | `str` | The site URL to check |
+
+**Returns:** `Dict[str, Any]` — same format as `check_site_health()`.
+
+### `get_traffic_stats()`
+
+Get current traffic statistics comparing today vs. yesterday.
+
+```python
+from fenrir import get_traffic_stats
+
+stats = get_traffic_stats()
+print(stats)
+# {
+#     "today": {"total": 1234, "errors": 28},
+#     "yesterday": {"total": 1100, "errors": 22}
+# }
+```
+
+**Returns:** `Dict[str, Any]` with `today` and `yesterday` sub-dicts containing `total` and `errors` counts.
 
 ---
 

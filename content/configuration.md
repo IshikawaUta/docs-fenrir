@@ -9,7 +9,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="3.1.2",
+    version="3.1.3",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"

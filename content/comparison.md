@@ -8,7 +8,7 @@ This page provides a comprehensive comparison between Fenrir and other popular P
 
 | Aspect | Fenrir | Flask | FastAPI | Sanic | Falcon | Bottle |
 |--------|--------|-------|---------|-------|--------|--------|
-| **Version** | 3.1.2 | 3.x | 0.115+ | 24.x | 4.x | 0.12.x |
+| **Version** | 3.1.3 | 3.x | 0.115+ | 24.x | 4.x | 0.12.x |
 | **Python** | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.7 |
 | **Async** | ✅ ASGI | ❌ | ✅ ASGI | ✅ ASGI | ❌ | ❌ |
 | **RPS (est.)** | ~15,000 | ~4,500 | ~14,200 | ~18,000 | ~15,000 | ~3,900 |
