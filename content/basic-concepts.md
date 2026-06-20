@@ -7,7 +7,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="3.1.3",
+    version="4.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
@@ -19,7 +19,7 @@ app = Fenrir(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `title` | `str` | `"Fenrir API"` | Application title (shown in OpenAPI docs) |
-| `version` | `str` | `"3.1.3"` | Application version |
+| `version` | `str` | `"4.0.0"` | Application version |
 | `docs_url` | `str` | `"/docs"` | Swagger UI endpoint path (`None` to disable) |
 | `redoc_url` | `str` | `"/redoc"` | ReDoc endpoint path (`None` to disable) |
 | `openapi_url` | `str` | `"/openapi.json"` | OpenAPI schema endpoint path (`None` to disable) |
@@ -76,8 +76,9 @@ app.config["DEBUG"] = True
 app.config["SECRET_KEY"] = "my-secret"
 app.config["DATABASE_URL"] = "postgresql://localhost/mydb"
 
-# Custom JSON provider
-app.json.default_timezone = "UTC"
+# Custom JSON serialization (uses orjson when available)
+from fenrir.json import json_dumps, json_loads
+data = json_dumps({"key": "value"})  # 7x faster with orjson
 ```
 
 ### App Methods

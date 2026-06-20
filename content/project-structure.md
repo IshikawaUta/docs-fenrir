@@ -66,7 +66,7 @@ my_fenrir_app/
 ### Example requirements.txt:
 
 ```text
-fenrir-framework==3.1.3
+fenrir-framework==4.0.0
 pydantic==2.0.0
 jinja2==3.0.0
 asteri>=2.2.2

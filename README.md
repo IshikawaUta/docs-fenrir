@@ -1,6 +1,6 @@
 # Fenrir Documentation Portal
 
-This repository contains the source code and Markdown content for the official documentation website of the **Fenrir Web Framework** (v3.1.3). 
+This repository contains the source code and Markdown content for the official documentation website of the **Fenrir Web Framework** (v4.0.0). 
 
 The portal is built as a lightweight, high-performance web application powered by **Fenrir** and the **Asteri** ASGI server. It dynamically parses and renders Markdown documentation pages on the fly, offering full-text search, clean sidebar navigation, and a modern responsive user interface.
 
@@ -11,7 +11,7 @@ The portal is built as a lightweight, high-performance web application powered b
 - ⚡ **Dynamic Rendering**: Documentation pages are written in standard Markdown (`.md`) inside the `content/` folder and rendered dynamically using Python's `markdown` library and Jinja2 templates.
 - 🔍 **Local Search API**: Features an in-memory full-text search endpoint (`/api/search`) to query documentation headers and content instantly.
 - 📐 **Clean Responsive Design**: Modern sidebar layout built using Tailwind CSS and Lucide Icons, fully responsive across mobile, tablet, and desktop screens.
-- 🦊 **Powered by Fenrir**: The portal runs on Fenrir v3.1.3 itself, showcasing its capabilities in a production-ready setup.
+- 🦊 **Powered by Fenrir**: The portal runs on Fenrir v4.0.0 itself, showcasing its capabilities in a production-ready setup.
 
 ---
 

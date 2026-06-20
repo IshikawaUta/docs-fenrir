@@ -1,4 +1,4 @@
-# Fenrir Web Framework v3.1.3
+# Fenrir Web Framework v4.0.0
 
 Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri.
 
@@ -35,6 +35,18 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Signals System: /docs/signals - Event-driven programming with signals.
 - JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
 - OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.
+
+## v4.0.0 New Features
+- Plugin System: /docs/plugin-system - Version compatibility, dependency resolution, config validation, hot-reload, health monitoring.
+- Hook System: /docs/hook-system - Priority ordering, one-time hooks, wildcard hooks, async/sync support, middleware integration.
+- Lightweight ORM: /docs/orm - SQLite/PostgreSQL, Model metaclass, QuerySet, SQL injection prevention.
+- Caching System: /docs/caching - MemoryCache (LRU+TTL), RedisCache, FileCache, prefix invalidation.
+- Queue & Job System: /docs/queue-system - Retry/backoff, job priorities, timeouts, worker pools, MemoryQueue/RedisQueue.
+- GraphQL Support: /docs/graphql-support - strawberry-graphql, GraphiQL playground, type-safe resolvers.
+- gRPC Support: /docs/grpc-support - GRPCServer, GRPCService, GRPCClient, interceptors, health checking.
+- Performance & orjson: /docs/performance - orjson (7x faster), ObjectPool, ResponseCache, PerformanceMonitor.
+
+## Additional Resources
 - Best Practices: /docs/best-practices - Performance, security, type hints.
 - Framework Comparison: /docs/comparison - Fenrir vs Flask vs FastAPI vs Sanic vs Falcon vs Bottle.
 - Conclusion: /docs/conclusion - Closing notes and full changelog.

@@ -8,7 +8,7 @@ This page provides a comprehensive comparison between Fenrir and other popular P
 
 | Aspect | Fenrir | Flask | FastAPI | Sanic | Falcon | Bottle |
 |--------|--------|-------|---------|-------|--------|--------|
-| **Version** | 3.1.3 | 3.x | 0.115+ | 24.x | 4.x | 0.12.x |
+| **Version** | 4.0.0 | 3.x | 0.115+ | 24.x | 4.x | 0.12.x |
 | **Python** | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.8 | ≥3.7 |
 | **Async** | ✅ ASGI | ❌ | ✅ ASGI | ✅ ASGI | ❌ | ❌ |
 | **RPS (est.)** | ~15,000 | ~4,500 | ~14,200 | ~18,000 | ~15,000 | ~3,900 |
@@ -175,7 +175,7 @@ Bottle:    ~3,900 req/s   ████
 3. **Connection Pool** — Built-in connection pooling (Flask/FastAPI require extensions)
 4. **HTTP/2 Push** — Server push without additional configuration
 5. **WSGI Compatibility** — Mount legacy Flask/Django/Bottle apps
-6. **Built-in Pagination** — 3 methods: offset, cursor, dict
+6. **Built-in Pagination** — 2 methods: paginate(), paginate_dict()
 7. **6 CLI Commands** — run, routes, shell, bench, new, info
 8. **Signals System** — Event-driven architecture
 9. **3 Session Backends** — Redis, in-memory, server-side
@@ -282,7 +282,7 @@ Fenrir offers a **complete solution** for developers who need:
 
 - **Flexibility** — Multi-paradigm (Flask-like, FastAPI-like, Falcon-like)
 - **Performance** — ASGI async, trie-based routing O(k)
-- **Productivity** — 88 built-in exports, 6 middleware, 10 auth classes
+- **Productivity** — 96 built-in exports, 6 middleware, 10 auth classes
 - **Migration** — WSGI compatibility for legacy apps
 
 **Best for:** Modern APIs, real-time apps, microservices, and teams wanting one framework for multiple use cases.

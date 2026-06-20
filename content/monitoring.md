@@ -1,6 +1,6 @@
 # Monitoring Dashboard
 
-Fenrir v3.1.3 includes a built-in monitoring dashboard for tracking application health, traffic analysis, and alerts. The dashboard is powered by `fenrir.features.init_fenrir_monitoring()` and provides both a web UI and REST API endpoints.
+Fenrir v4.0.0 includes a built-in monitoring dashboard for tracking application health, traffic analysis, and alerts. The dashboard is powered by `fenrir.features.init_fenrir_monitoring()` and provides both a web UI and REST API endpoints.
 
 ---
 
@@ -12,7 +12,7 @@ Fenrir v3.1.3 includes a built-in monitoring dashboard for tracking application 
 from fenrir import Fenrir
 from fenrir.features import init_fenrir_monitoring
 
-app = Fenrir(title="My App", version="3.1.3")
+app = Fenrir(title="My App", version="4.0.0")
 
 # Enable the monitoring dashboard
 init_fenrir_monitoring(app)
@@ -201,7 +201,7 @@ from fenrir.features import init_fenrir_monitoring
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("myapp")
 
-app = Fenrir(title="Production App", version="3.1.3")
+app = Fenrir(title="Production App", version="4.0.0")
 
 # Configure monitoring via environment
 # Or pass configuration directly:

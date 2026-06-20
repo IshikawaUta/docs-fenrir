@@ -59,7 +59,7 @@ async def info():
     }
 ```
 
-> **Note:** `DefaultJSONProvider` uses `json.dumps` under the hood. The `default` callback only fires for types that `json` cannot natively serialize. `bytes` and `tuple` are **not** handled here—use `TaggedJSONSerializer` if you need round-trip fidelity for those.
+> **Note:** When orjson is installed (default in v4.0.0), `DefaultJSONProvider` uses `orjson.dumps` which natively handles `datetime`, `date`, `UUID`, and more. Falls back to stdlib `json.dumps` with a custom `default` handler when orjson is not available.
 
 ---
 
@@ -188,7 +188,7 @@ serializer.tags["set"] = TagSet()
 
 | Member | Type | Description |
 |--------|------|-------------|
-| `dumps(obj, **kwargs) -> str` | method | `json.dumps` with `ensure_ascii=False` and a `default` handler for `datetime`, `date`, `UUID`. |
+| `dumps(obj, **kwargs) -> str` | method | Uses orjson when available (7x faster), falls back to `json.dumps` with `ensure_ascii=False` and a `default` handler. |
 | `loads(s, **kwargs) -> Any` | method | Delegates to `json.loads`. |
 
 ### `JSONTag`
