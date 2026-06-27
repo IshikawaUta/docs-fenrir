@@ -1,6 +1,6 @@
 # Queue & Job System
 
-Fenrir v4.0.0 includes a production-ready queue and job system for background processing.
+Fenrir v4.1.0 includes a production-ready queue and job system for background processing.
 
 ## Overview
 

@@ -1,4 +1,4 @@
-# Fenrir Web Framework v4.0.0
+# Fenrir Web Framework v4.1.0
 
 Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri.
 
@@ -36,7 +36,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
 - OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.
 
-## v4.0.0 New Features
+## v4.1.0 Updates
 - Plugin System: /docs/plugin-system - Version compatibility, dependency resolution, config validation, hot-reload, health monitoring.
 - Hook System: /docs/hook-system - Priority ordering, one-time hooks, wildcard hooks, async/sync support, middleware integration.
 - Lightweight ORM: /docs/orm - SQLite/PostgreSQL, Model metaclass, QuerySet, SQL injection prevention.

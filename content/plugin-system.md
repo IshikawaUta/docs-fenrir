@@ -1,6 +1,6 @@
 # Plugin System
 
-Fenrir v4.0.0 introduces a production-ready plugin system for extending the framework with modular, reusable components.
+Fenrir v4.1.0 introduces a production-ready plugin system for extending the framework with modular, reusable components.
 
 ## Overview
 
@@ -30,7 +30,7 @@ class MyPlugin(Plugin):
     optional = ["cache-plugin"]
     
     # Version compatibility
-    min_fenrir_version = "4.0.0"
+    min_fenrir_version = "4.1.0"
     max_fenrir_version = "5.0.0"
     
     def setup(self, app, config):

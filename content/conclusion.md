@@ -12,6 +12,73 @@ Happy coding! 🐺
 
 ---
 
+### v4.1.0 — Bug Fixes, Performance & Test Coverage
+
+**Bug Fixes (56)**
+
+- **CRITICAL (5)**: CSRF token HMAC predictable randomness, CORS duplicate branches, RateLimit TOCTOU race condition, BodyLimit double response, config.py exec() path traversal
+- **HIGH (9)**: RateLimit asyncio.Lock → deque, MemoryQueue unbounded cleanup, ORM ORDER BY column_name, PostgreSQL INSERT RETURNING, monitoring default password rejection, SSRF validation, graphql.py JSONResponse status_code, graphql.py sync context_factory
+- **MEDIUM (18)**: CORS headers, BodyLimit body drain, sessions.py event loop crash, plugins.py lazy import validation, monitoring/routes.py logout GET → POST CSRF, _app_dispatch.py duplicate response_model, ORM transaction() context manager, cache.py cached decorator exists() check
+- **LOW (14+)**: context.py RequestContext leak, testing.py follow_redirects, helpers.py url_for WebSocket, sse.py sync generator blocking, pool.py lock None guard, openapi.py HEAD filter, monitoring HTML injection
+
+**Performance Optimizations (12)**
+
+- FileResponse stream_body with run_in_executor for non-blocking I/O
+- is_falcon_resource() cached at route init for faster detection
+- TypeAdapter cache per annotation in dependencies for faster validation
+- URLSafeTimedSerializer cache in sessions for faster serialization
+- ORM field_index_map O(1) lookup instead of O(n) list.index()
+- deque for RateLimit instead of list filter for O(1) popleft
+- Redis aclose() and set(ex=ttl) deprecation fixes
+- LruCache.popitem() O(1) for cache eviction
+- transaction() context manager for ORM batched commits
+- Import hot path dedup in _app_dispatch.py
+- Lazy imports cached for BackgroundTasks, UploadFile, current_app
+- linecache for debug source inspection
+
+**Deprecation Fixes (3)**
+
+- RedisQueue close() → aclose() (aioredis deprecation)
+- RedisCache close() → aclose() (aioredis deprecation)
+- RedisCache setex() → set(ex=ttl) (redis-py deprecation)
+
+**Test Coverage: 76% → 83% (1331 tests)**
+
+- graphql.py: 32% → 92% (19 new tests)
+- grpc.py: 49% → 70% (24 new tests)
+- upload.py: 54% → 100% (15 new tests)
+- templating.py: 65% → 100% (12 new tests)
+- orm.py: 64% → 71% (32 new tests)
+- signals.py: 71% → 96% (19 new tests)
+- cache.py: 52% → 91% (50 new tests)
+- plugins.py: 63% → 86% (77 new tests)
+- performance.py: 0% → 85% (51 new tests)
+- queue.py: 47% → 94% (47 new tests)
+- cli.py: 44% → 68% (17 new tests)
+
+**Benchmark: 5-Framework Comparison**
+
+- Fenrir wins Import Time (108ms vs FastAPI 1013ms) and Route Registration (59ms vs FastAPI 299ms)
+- Falcon wins Throughput (3419 req/s) and Import Time in some runs
+- FastAPI wins App Init (0.64ms)
+- Fenrir overall winner with 2/5 categories
+
+**Security Fixes**
+
+- Hardcoded API key in demo_app.py → environment variable API_KEY
+- Default password "changeme" → rejection with warning
+- SSRF validation for monitoring health checks
+- CSRF token now uses cryptographically secure random (secrets.token_hex)
+- Monitoring dashboard logout changed from GET to POST for CSRF protection
+- Site health bypass SSRF for user-configured sites only
+
+**Compatibility**
+
+- MemoryQueue lazy init asyncio.PriorityQueue for Python 3.9 compatibility
+- fakeredis fixtures with proper event loop setup for Python 3.9
+
+---
+
 ### v4.0.0 — Production-Ready Major Release
 
 **New Features**

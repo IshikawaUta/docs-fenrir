@@ -1,6 +1,6 @@
 # Lightweight ORM
 
-Fenrir v4.0.0 includes a lightweight async ORM for SQLite and PostgreSQL databases.
+Fenrir v4.1.0 includes a lightweight async ORM for SQLite and PostgreSQL databases.
 
 ## Overview
 

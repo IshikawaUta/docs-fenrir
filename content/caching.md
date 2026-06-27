@@ -1,6 +1,6 @@
 # Caching System
 
-Fenrir v4.0.0 includes a flexible caching system with multiple backends.
+Fenrir v4.1.0 includes a flexible caching system with multiple backends.
 
 ## Overview
 

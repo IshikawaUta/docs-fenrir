@@ -1,6 +1,6 @@
 # gRPC Support
 
-Fenrir v4.0.0 includes built-in gRPC support for building high-performance RPC services.
+Fenrir v4.1.0 includes built-in gRPC support for building high-performance RPC services.
 
 ## Overview
 

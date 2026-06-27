@@ -1,6 +1,6 @@
 # GraphQL Support
 
-Fenrir v4.0.0 includes built-in GraphQL support via strawberry-graphql.
+Fenrir v4.1.0 includes built-in GraphQL support via strawberry-graphql.
 
 ## Overview
 
@@ -155,6 +155,17 @@ The GraphiQL playground provides:
 
 ## Advanced Usage
 
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `schema` | `strawberry.Schema` | **required** | The Strawberry GraphQL schema |
+| `path` | `str` | `"/graphql"` | URL path for the GraphQL endpoint |
+| `graphiql` | `bool` | `True` | Enable GraphiQL playground |
+| `introspection` | `bool` | `True` | Enable schema introspection |
+| `max_depth` | `int` | `10` | Maximum query depth |
+| `context_factory` | `Callable` | `None` | Custom context factory (sync/async callable) |
+
 ### Custom Scalar Types
 
 ```python
@@ -183,3 +194,5 @@ class Query:
         # Access request context
         return get_current_user(request)
 ```
+
+> **Note:** "Known Limitations" The `max_depth` and `introspection` parameters are accepted but **not currently enforced** in v4.1.0. Query depth limiting and introspection disabling will be implemented in a future release. For production use, consider implementing depth limiting at the Strawberry schema level.
