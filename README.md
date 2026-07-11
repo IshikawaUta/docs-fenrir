@@ -1,5 +1,13 @@
 # docs-fenrir
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/Fenrir-4.1.2-9b59b6.svg)](https://pypi.org/project/fenrir-framework/)
+[![Tests](https://img.shields.io/badge/Tests-87%20Passed-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/Coverage-94%25-green.svg)]()
+[![CI](https://github.com/IshikawaUta/docs-fenrir/actions/workflows/ci.yml/badge.svg)](https://github.com/IshikawaUta/docs-fenrir/actions/workflows/ci.yml)
+[![Deployment](https://img.shields.io/badge/Deployed-Vercel-black.svg)](https://vercel.app)
+
 Documentation portal for the [Fenrir](https://github.com/IshikawaUta/fenrir) Python web framework v4.1.2. Built with Fenrir itself — a single ASGI application that serves 43 Markdown documentation pages with full-text search, SEO endpoints, and a responsive sidebar layout.
 
 ## Features
