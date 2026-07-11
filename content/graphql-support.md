@@ -1,6 +1,6 @@
 # GraphQL Support
 
-Fenrir v4.1.0 includes built-in GraphQL support via strawberry-graphql.
+Fenrir v4.1.2 includes built-in GraphQL support via strawberry-graphql.
 
 ## Overview
 
@@ -58,7 +58,7 @@ graphql_router = GraphQLRouter(schema)
 
 # Mount to app
 app = Fenrir()
-app.include_router(graphql_router, prefix="/graphql")
+graphql_router.mount(app, path="/graphql")
 ```
 
 ## Querying
@@ -194,5 +194,3 @@ class Query:
         # Access request context
         return get_current_user(request)
 ```
-
-> **Note:** "Known Limitations" The `max_depth` and `introspection` parameters are accepted but **not currently enforced** in v4.1.0. Query depth limiting and introspection disabling will be implemented in a future release. For production use, consider implementing depth limiting at the Strawberry schema level.

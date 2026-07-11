@@ -1,6 +1,6 @@
 # Plugin System
 
-Fenrir v4.1.0 introduces a production-ready plugin system for extending the framework with modular, reusable components.
+Fenrir v4.1.2 introduces a production-ready plugin system for extending the framework with modular, reusable components.
 
 ## Overview
 
@@ -30,22 +30,22 @@ class MyPlugin(Plugin):
     optional = ["cache-plugin"]
     
     # Version compatibility
-    min_fenrir_version = "4.1.0"
+    min_fenrir_version = "4.1.2"
     max_fenrir_version = "5.0.0"
     
-    def setup(self, app, config):
+    def setup(self, app, **kwargs):
         """Called when plugin is loaded."""
         self.app = app
-        self.config = config
+        self.config = kwargs
         # Register routes, middleware, etc.
         
-    def teardown(self):
+    def teardown(self, app):
         """Called when plugin is unloaded."""
         pass
         
     def health_check(self):
         """Return health status."""
-        return {"status": "healthy", "plugin": self.name}
+        return {"status": "healthy", "version": self.version}
 ```
 
 ## Registering Plugins
@@ -145,10 +145,10 @@ class MyPlugin(Plugin):
         "debug": {"type": "bool", "default": False},
     }
     
-    def setup(self, app, config):
+    def setup(self, app, **kwargs):
         # config is validated against schema
-        self.api_key = config["api_key"]
-        self.timeout = config["timeout"]
+        self.api_key = kwargs["api_key"]
+        self.timeout = kwargs["timeout"]
 ```
 
 ## Health Monitoring
@@ -157,12 +157,11 @@ class MyPlugin(Plugin):
 # Check plugin health
 health = registry.get_plugin_health("my-plugin")
 print(health.status)      # "healthy"
-print(health.uptime)      # 3600
 
 # Plugin also provides its own health_check method
 plugin = registry.get("my-plugin")
 status = plugin.health_check()
-print(status)  # {"status": "healthy", "plugin": "my-plugin"}
+print(status)  # {"status": "healthy", "version": "1.0.0"}
 ```
 
 ## Thread Safety

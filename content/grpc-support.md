@@ -1,6 +1,6 @@
 # gRPC Support
 
-Fenrir v4.1.0 includes built-in gRPC support for building high-performance RPC services.
+Fenrir v4.1.2 includes built-in gRPC support for building high-performance RPC services.
 
 ## Overview
 
@@ -94,9 +94,9 @@ class MyService(GRPCService):
 from fenrir.grpc import GRPCInterceptor
 
 class LoggingInterceptor(GRPCInterceptor):
-    async def intercept(self, request, context, handler):
-        print(f"Request: {request}")
-        response = await handler(request, context)
+    async def intercept(self, method: str, request, context):
+        print(f"Method: {method}, Request: {request}")
+        response = await method(request, context)
         print(f"Response: {response}")
         return response
 
@@ -121,16 +121,9 @@ server = GRPCServer()
 from fenrir.grpc import GRPCClient
 
 # Create client
-client = GRPCClient("localhost:50051")
-
-# Call service
-response = await client.call(
-    service="user",
-    method="get_user",
-    request={"id": 1}
-)
-
-print(response)  # {"id": 1, "name": "John"}
+async with GRPCClient("localhost:50051") as client:
+    # Connection established
+    pass
 ```
 
 ## Server Lifecycle

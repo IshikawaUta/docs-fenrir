@@ -4,10 +4,10 @@ Fenrir supports running background tasks after sending the response, allowing yo
 
 ## Simple Background Task
 
-Use `BackgroundTask` to run a single function after the response is sent:
+Use `BackgroundTasks` to run functions after the response is sent:
 
 ```python
-from fenrir import BackgroundTask
+from fenrir import BackgroundTasks
 
 async def send_email_task(email: str, subject: str):
     print(f"Sending email to {email}: {subject}")
@@ -15,8 +15,8 @@ async def send_email_task(email: str, subject: str):
     print(f"Email sent to {email}")
 
 @app.post("/send-email")
-async def send_email():
-    task = BackgroundTask(send_email_task, "user@example.com", "Welcome!")
+async def send_email(background_tasks: BackgroundTasks):
+    background_tasks.add_task(send_email_task, "user@example.com", "Welcome!")
     return {"message": "Email queued"}
 ```
 

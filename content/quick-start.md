@@ -6,7 +6,7 @@ Create a simple `app.py` file:
 from fenrir import Fenrir
 
 # Initialize the application
-app = Fenrir(title="My First Application", version="4.1.0")
+app = Fenrir(title="My First Application", version="4.1.2")
 
 # FastAPI-style routing
 @app.get("/")

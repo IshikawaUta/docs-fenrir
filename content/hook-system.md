@@ -1,6 +1,6 @@
 # Hook System
 
-Fenrir v4.1.0 includes a powerful hook/extension point system for intercepting and modifying framework behavior.
+Fenrir v4.1.2 includes a powerful hook/extension point system for intercepting and modifying framework behavior.
 
 ## Overview
 

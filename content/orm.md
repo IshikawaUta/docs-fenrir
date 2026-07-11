@@ -1,6 +1,6 @@
 # Lightweight ORM
 
-Fenrir v4.1.0 includes a lightweight async ORM for SQLite and PostgreSQL databases.
+Fenrir v4.1.2 includes a lightweight async ORM for SQLite and PostgreSQL databases.
 
 ## Overview
 
@@ -42,7 +42,7 @@ class User(Model):
     age = fields.Integer(default=0)
     is_active = fields.Boolean(default=True)
     created_at = fields.Datetime(auto_now_add=True)
-    metadata = fields.JSON(default=dict)
+    metadata = fields.JSONField(default=dict)
 
 class Post(Model):
     __tablename__ = "posts"
@@ -140,7 +140,7 @@ fields.Float(default=0.0)            # FLOAT
 fields.Boolean(default=False)        # BOOLEAN
 fields.Datetime(auto_now_add=True)   # Auto-set on create
 fields.Datetime(auto_now=True)       # Auto-set on update
-fields.JSON(default=dict)            # JSON object
+fields.JSONField(default=dict)       # JSON object
 ```
 
 ## Database Operations

@@ -1,6 +1,6 @@
 # Caching System
 
-Fenrir v4.1.0 includes a flexible caching system with multiple backends.
+Fenrir v4.1.2 includes a flexible caching system with multiple backends.
 
 ## Overview
 
@@ -9,7 +9,7 @@ The caching system provides:
 - **MemoryCache**: In-memory LRU cache with TTL
 - **RedisCache**: Redis-backed distributed cache
 - **FileCache**: File-based cache with atomic writes
-- **Prefix Invalidation**: Clear cache by prefix
+- **Prefix Invalidation**: Invalidate cached entries by prefix via `@cache.invalidate(key_prefix=...)` decorator
 - **orjson Serialization**: Fast JSON serialization
 
 ## MemoryCache
@@ -28,9 +28,6 @@ user = await cache.get("user:1")
 
 # Delete
 await cache.delete("user:1")
-
-# Clear by prefix
-await cache.clear_prefix("user:")
 
 # Clear all
 await cache.clear()
@@ -52,9 +49,6 @@ await cache.set("user:1", {"name": "John"}, ttl=300)
 
 # Get
 user = await cache.get("user:1")
-
-# Clear by prefix
-await cache.clear_prefix("user:")
 ```
 
 ## FileCache
@@ -65,7 +59,7 @@ from fenrir.cache import FileCache
 # Create file cache
 cache = FileCache(
     cache_dir="/tmp/fenrir_cache",
-    max_size=1000
+    ttl=3600
 )
 
 # Set with TTL
@@ -107,8 +101,8 @@ async def get_user(user_id):
 # Invalidate specific key
 await cache.delete("user:1")
 
-# Invalidate by prefix
-await cache.clear_prefix("user:")
+# Invalidate all
+await cache.clear()
 
 # Invalidate all
 await cache.clear()

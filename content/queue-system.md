@@ -1,6 +1,6 @@
 # Queue & Job System
 
-Fenrir v4.1.0 includes a production-ready queue and job system for background processing.
+Fenrir v4.1.2 includes a production-ready queue and job system for background processing.
 
 ## Overview
 
@@ -34,7 +34,7 @@ worker = Worker(queue, concurrency=5)
 # Enqueue job
 job = await queue.enqueue(
     "send_email",
-    args=("user@example.com", "Welcome!", "Hello!"),
+    "user@example.com", "Welcome!", "Hello!",
     priority=1,
     max_retries=3,
     timeout=30
@@ -69,14 +69,13 @@ worker = Worker(queue, concurrency=10)
 ## Job Configuration
 
 ```python
-# Enqueue with options
+# Enqueue with options (args and kwargs are positional)
 job = await queue.enqueue(
     "task_name",
-    args=(arg1, arg2),
-    kwargs={"key": "value"},
+    arg1, arg2,
+    key="value",
     priority=0,          # Higher = more priority
     max_retries=3,       # Max retry attempts
-    retry_delay=1.0,     # Base delay in seconds
     timeout=60,          # Timeout in seconds
     delay=10             # Delay before execution
 )
@@ -93,8 +92,9 @@ print(job.error)       # Error message if failed
 print(job.retry_count) # Current retry count
 
 # Get jobs by status
-pending = await queue.get_jobs_by_status("pending")
-running = await queue.get_jobs_by_status("running")
+from fenrir.queue import JobStatus
+pending = await queue.get_jobs_by_status(JobStatus.PENDING)
+running = await queue.get_jobs_by_status(JobStatus.RUNNING)
 ```
 
 ## Worker Configuration

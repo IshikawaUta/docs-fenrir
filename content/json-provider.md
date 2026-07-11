@@ -59,7 +59,7 @@ async def info():
     }
 ```
 
-> **Note:** When orjson is installed (default in v4.1.0), `DefaultJSONProvider` uses `orjson.dumps` which natively handles `datetime`, `date`, `UUID`, and more. Falls back to stdlib `json.dumps` with a custom `default` handler when orjson is not available.
+> **Note:** When orjson is installed (default in v4.1.2), `DefaultJSONProvider` uses `orjson.dumps` which natively handles `datetime`, `date`, `UUID`, and more. Falls back to stdlib `json.dumps` with a custom `default` handler when orjson is not available.
 
 ---
 

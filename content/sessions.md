@@ -222,7 +222,7 @@ Install Redis support: `pip install fenrir-framework[redis]`
 | `SESSION_COOKIE_NAME` | `"session"` | Cookie name |
 | `SESSION_COOKIE_DOMAIN` | `None` | Cookie domain |
 | `SESSION_COOKIE_PATH` | `"/"` | Cookie path |
-| `SESSION_COOKIE_SECURE` | `False` | Only send cookie over HTTPS |
+| `SESSION_COOKIE_SECURE` | `True` | Only send cookie over HTTPS |
 | `SESSION_COOKIE_HTTPONLY` | `True` | Prevent JavaScript access to cookie |
 | `SESSION_COOKIE_SAMESITE` | `None` | SameSite cookie attribute (`"Strict"`, `"Lax"`, `"None"`) |
 | `SESSION_TTL` | `86400` | Session TTL in seconds (server-side backends) |

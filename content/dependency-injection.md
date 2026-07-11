@@ -458,7 +458,7 @@ from fenrir import Request, Response
 async def get_items(req: Request):
     # Access request properties
     user_agent = req.headers.get("user-agent")
-    ip = req.client.host if req.client else "unknown"
+    ip = req.host
     return {"user_agent": user_agent, "ip": ip}
 
 # Response auto-injection
@@ -472,7 +472,7 @@ async def get_items(resp: Response):
 @app.get("/items")
 async def get_items(req: Request, resp: Response):
     # Log request and modify response
-    print(f"Request: {req.method} {req.url}")
+    print(f"Request: {req.method} {req.path}")
     resp.headers["X-Request-ID"] = req.headers.get("x-request-id", "unknown")
     return {"items": []}
 
@@ -560,7 +560,7 @@ async def get_profile(
 ):
     return {
         "user": user,
-        "ip": req.client.host if req.client else "unknown",
+        "ip": req.host,
     }
 
 @app.get("/items")

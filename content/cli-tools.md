@@ -140,13 +140,13 @@ fenrir shell myapp.py
 ### Sample Session
 
 ```
-Fenrir 4.1.0 Interactive Shell
+Fenrir 4.1.2 Interactive Shell
 App: My App [/docs]
 Available in context: 'app', 'request', 'g', 'Response', 'JSONResponse', 'HTMLResponse', 'Blueprint'
 >>> app.title
 'My App'
 >>> app.version
-'4.1.0'
+'4.1.2'
 >>> list(app.router.routes)
 [<Route GET / >, <Route GET /api/users >]
 ```
@@ -281,7 +281,7 @@ fenrir info myapp.py
 =============================================
 SYSTEM ENVIRONMENT
 =============================================
-Fenrir version:      4.1.0
+Fenrir version:      4.1.2
 Python version:      3.11.0
 Python executable:   /usr/bin/python3
 OS Platform:         Linux 6.1.0
@@ -291,7 +291,7 @@ Asteri installed:    Yes (v2.3.2)
 APPLICATION DETAILS
 =============================================
 App Title:           My App
-App Version:         4.1.0
+App Version:         4.1.2
 HTTP Routes:         10
 WebSocket Routes:    2
 Middlewares:         1
