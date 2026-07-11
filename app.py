@@ -35,6 +35,7 @@ from fenrir import (
     send_from_directory,
 )
 from fenrir.json import json_dumps
+from fenrir.performance import optimize_app
 
 logging.basicConfig(
     level=logging.INFO,
@@ -47,7 +48,7 @@ logger = logging.getLogger("docs-fenrir")
 # ---------------------------------------------------------------------------
 app = Fenrir(
     title="Fenrir Docs",
-    version="4.1.0",
+    version="4.1.2",
     dev_mode=os.environ.get("FENRIR_DEV", "0") == "1",
 )
 
@@ -62,6 +63,9 @@ try:
     init_fenrir_monitoring(app)
 except Exception:
     pass
+
+# Optimasi performa: cache OpenAPI, pre-resolve handler params, dll
+optimize_app(app)
 
 # ---------------------------------------------------------------------------
 # Constants (computed once at import time)
@@ -113,7 +117,7 @@ SIDEBAR: List[Dict[str, Any]] = [
     {"title": "Performance and orjson Integration in Fenrir Framework", "id": "performance", "icon": "zap", "description": "Performance optimization in Fenrir with orjson for 7x faster JSON serialization, ObjectPool, ResponseCache, PerformanceMonitor, and optimize_app() for maximum throughput."},
     {"title": "Production Best Practices for Fenrir Python Applications", "id": "best-practices", "icon": "award", "description": "Production-ready patterns and best practices for Fenrir applications: performance optimization, security hardening, type hints, code organization, and deployment guidelines."},
     {"title": "Framework Comparison Fenrir vs FastAPI Flask Sanic", "id": "comparison", "icon": "bar-chart", "description": "Compare Fenrir framework vs Flask vs FastAPI vs Sanic vs Falcon vs Bottle features, performance benchmarks, ecosystem, use cases, and migration guides for informed decisions."},
-    {"title": "Complete Conclusion and Fenrir v4.1.0 Release Changelog", "id": "conclusion", "icon": "flag", "description": "Fenrir v4.1.0 complete changelog with bug fixes, performance optimizations, test coverage improvements, benchmark results, and migration guide from previous versions."},
+    {"title": "Complete Conclusion and Fenrir v4.1.2 Release Changelog", "id": "conclusion", "icon": "flag", "description": "Fenrir v4.1.2 complete changelog with bug fixes, performance optimizations, test coverage improvements, benchmark results, and migration guide from previous versions."},
 ]
 
 # Pre-compute sidebar index (dict lookup is O(1) vs list scan O(n))
@@ -335,7 +339,12 @@ async def search() -> Any:
                 "snippet": snippet,
             })
 
-    return JSONResponse(results)
+    try:
+        import orjson
+        body = orjson.dumps(results)
+        return Response(body=body, content_type="application/json")
+    except ImportError:
+        return JSONResponse(results)
 
 
 # ---------------------------------------------------------------------------
