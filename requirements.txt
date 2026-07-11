@@ -1,7 +1,8 @@
-fenrir-framework
+fenrir-framework>=4.1.2
 pydantic
 Jinja2
 markdown
 pygments
 python-dotenv
 httpx
+orjson
