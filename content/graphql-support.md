@@ -1,6 +1,6 @@
 # GraphQL Support
 
-Fenrir v4.1.2 includes built-in GraphQL support via strawberry-graphql.
+Fenrir v4.4.0 includes built-in GraphQL support via strawberry-graphql.
 
 ## Overview
 
