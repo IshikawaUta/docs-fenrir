@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ current_page.description if current_page else 'Fenrir v4.1.2 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
+    <meta name="description" content="{{ current_page.description if current_page else 'Fenrir v4.4.0 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
     <meta name="keywords" content="Fenrir, Python web framework, ASGI, FastAPI, Flask, Falcon, Sanic, middleware, sessions, request, response, authentication, API key, dependency injection, WebSocket, OpenAPI, background tasks, data validation, plugin system, hooks, ORM, caching, queue, GraphQL, gRPC, performance">
     <link rel="canonical" href="{{ canonical_url }}">
+    
+    <!-- Preconnect to external domains (reduces DNS+TLS latency) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ canonical_url }}">
-    <meta property="og:title" content="{{ current_page.title ~ ' - Fenrir v4.1.2' if current_page else 'Fenrir v4.1.2 - Python Middleware & Sessions Framework' }}">
-    <meta property="og:description" content="{{ current_page.description if current_page else 'Fenrir v4.1.2 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
+    <meta property="og:title" content="{{ current_page.title ~ ' - Fenrir v4.4.0' if current_page else 'Fenrir v4.4.0 - Python Middleware & Sessions Framework' }}">
+    <meta property="og:description" content="{{ current_page.description if current_page else 'Fenrir v4.4.0 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
     <meta property="og:image" content="{{ base_url }}static/images/logo.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ canonical_url }}">
-    <meta property="twitter:title" content="{{ current_page.title ~ ' - Fenrir v4.1.2' if current_page else 'Fenrir v4.1.2 - Python Middleware & Sessions Framework' }}">
-    <meta property="twitter:description" content="{{ current_page.description if current_page else 'Fenrir v4.1.2 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
+    <meta property="twitter:title" content="{{ current_page.title ~ ' - Fenrir v4.4.0' if current_page else 'Fenrir v4.4.0 - Python Middleware & Sessions Framework' }}">
+    <meta property="twitter:description" content="{{ current_page.description if current_page else 'Fenrir v4.4.0 Python web framework documentation: middleware, sessions, request handling, authentication, ASGI server, dependency injection.' }}">
     <meta property="twitter:image" content="{{ base_url }}static/images/logo.jpg">
 
-    <title>{{ current_page.title ~ ' - Fenrir v4.1.2' if current_page else 'Fenrir v4.1.2 - Python Middleware & Sessions Framework' }}</title>
-    <link rel="icon" href="/static/images/favicon.png" type="image/png">
+    <title>{{ current_page.title ~ ' - Fenrir v4.4.0' if current_page else 'Fenrir v4.4.0 - Python Middleware & Sessions Framework' }}</title>
+    <link rel="icon" href="/static/images/favicon.png" type="image/png" fetchpriority="high">
+    
+    <!-- Critical CSS (preloaded) -->
+    <link rel="preload" href="/static/css/style.css" as="style" fetchpriority="high">
+    <link rel="stylesheet" href="/static/css/style.css">
     
     <!-- Suppress Tailwind Play CDN production warning -->
     <script>
@@ -43,10 +55,16 @@
         }
     </script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts (preloaded, non-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" as="style" fetchpriority="low">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <!-- Font Awesome (non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" fetchpriority="low">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <!-- Lucide Icons (deferred) -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
     
     <!-- Structured Data (Schema.org) -->
     <script type="application/ld+json">
@@ -82,7 +100,7 @@
       "name": "Fenrir Web Framework",
       "operatingSystem": "Linux, macOS, Windows",
       "applicationCategory": "DeveloperApplication",
-      "softwareVersion": "4.1.2",
+      "softwareVersion": "4.4.0",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -94,49 +112,57 @@
 <body class="h-screen flex flex-col">
 
     <!-- Announcement Bar -->
-    <div class="announcement-bar">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-2"></i>
-        <span>NEW: Fenrir v4.1.2 — 56 Bug Fixes, Performance Optimizations, 1331 Tests, 5-Framework Benchmark!</span>
-        <a href="/docs/conclusion" class="ml-3 underline hover:text-white">Read the changelog</a>
+    <div class="announcement-bar" role="banner" aria-label="Latest announcement">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-2" aria-hidden="true"></i>
+        <span>NEW: Fenrir v4.4.0 — CSRF Graceful Fallback, Security Hardening, 2358 Tests, 99% Coverage!</span>
+        <a href="/docs/conclusion" class="ml-3 underline hover:text-white" aria-label="Read the changelog">Read the changelog</a>
     </div>
 
     <!-- Main Container -->
     <div class="flex-1 flex overflow-hidden">
         
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar flex flex-col">
+        <aside id="sidebar" class="sidebar flex flex-col" role="navigation" aria-label="Documentation sidebar">
             <!-- Search Bar -->
-            <div class="p-4 border-b border-gray-200 dark:border-gray-800">
+            <div class="p-4 border-b" style="border-color: var(--border-color)">
                 <div class="relative group">
-                    <i data-lucide="search" class="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-500"></i>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-500" aria-hidden="true"></i>
+                    </div>
                     <input type="text" id="searchInput" placeholder="Search (/) ..." 
-                        class="w-full bg-white dark:bg-[#1e1e1e] border border-gray-300 dark:border-gray-700 rounded-md pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-800 dark:text-gray-200">
+                        class="w-full rounded-md pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        style="background-color: var(--bg-editor); border-color: var(--border-color); color: var(--text-main)"
+                        aria-label="Search documentation"
+                        aria-autocomplete="list"
+                        aria-controls="searchResults"
+                        aria-expanded="false"
+                        role="combobox">
                     
                     <!-- Search Results Dropdown -->
-                    <div id="searchResults" class="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#252526] border border-gray-200 dark:border-gray-700 rounded shadow-xl z-[110] hidden max-h-80 overflow-y-auto">
+                    <div id="searchResults" class="absolute left-0 right-0 top-full mt-1 rounded shadow-xl z-[110] hidden max-h-80 overflow-y-auto" role="listbox" aria-label="Search results" style="background-color: var(--bg-sidebar); border: 1px solid var(--border-color)">
                         <!-- Results will be injected here -->
                     </div>
                 </div>
             </div>
 
-            <div class="p-4 uppercase text-xs font-semibold tracking-wider text-gray-500 flex justify-between items-center">
-                <span>Explorer: Fenrir Docs</span>
-                <button id="closeSidebar" class="md:hidden p-1 hover:bg-gray-200 dark:hover:bg-white/10 rounded">
-                    <i data-lucide="x" class="w-4 h-4 cursor-pointer"></i>
+            <div class="p-4 uppercase text-xs font-semibold tracking-wider flex justify-between items-center" style="color: var(--text-main)">
+                <span id="sidebarTitle">Explorer: Fenrir Docs</span>
+                <button id="closeSidebar" class="md:hidden p-1 hover:opacity-80 rounded" aria-label="Close sidebar" aria-describedby="sidebarTitle">
+                    <i data-lucide="x" class="w-4 h-4 cursor-pointer" aria-hidden="true"></i>
                 </button>
             </div>
             
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto" role="tree" aria-labelledby="sidebarTitle">
                 <!-- Docs Group -->
-                <div class="sidebar-group">
-                    <div class="group-header flex items-center px-2 py-1 text-xs font-bold text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-200 dark:hover:bg-white/5" data-target="docs-content">
-                        <i data-lucide="chevron-down" class="w-4 h-4 mr-1 chevron-icon"></i>
+                <div class="sidebar-group" role="treeitem" aria-expanded="true">
+                    <div class="group-header flex items-center px-2 py-1 text-xs font-bold cursor-pointer hover:opacity-80" data-target="docs-content" role="button" tabindex="0" aria-controls="docs-content" style="color: var(--text-main)">
+                        <i data-lucide="chevron-down" class="w-4 h-4 mr-1 chevron-icon" aria-hidden="true"></i>
                         <span>DOCS</span>
                     </div>
-                    <div id="docs-content" class="group-content">
+                    <div id="docs-content" class="group-content" role="group" aria-label="Documentation pages">
                         {% for item in sidebar %}
-                        <a href="/docs/{{ item.id }}" class="sidebar-item {% if current_id == item.id %}active{% endif %}">
-                            <i data-lucide="{{ item.icon }}" class="w-4 h-4 mr-2 text-blue-500 dark:text-blue-400"></i>
+                        <a href="/docs/{{ item.id }}" class="sidebar-item {% if current_id == item.id %}active{% endif %}" role="treeitem" aria-current="{% if current_id == item.id %}page{% else %}false{% endif %}">
+                            <i data-lucide="{{ item.icon }}" class="w-4 h-4 mr-2" style="color: var(--accent-color)" aria-hidden="true"></i>
                             <span>{{ item.id }}.md</span>
                         </a>
                         {% endfor %}
@@ -144,18 +170,26 @@
                 </div>
 
                 <!-- Resources Group -->
-                <div class="sidebar-group mt-4">
-                    <div class="group-header flex items-center px-2 py-1 text-xs font-bold text-gray-600 dark:text-gray-400 cursor-pointer hover:bg-gray-200 dark:hover:bg-white/5" data-target="resources-content">
-                        <i data-lucide="chevron-down" class="w-4 h-4 mr-1 chevron-icon"></i>
+                <div class="sidebar-group mt-4" role="treeitem" aria-expanded="true">
+                    <div class="group-header flex items-center px-2 py-1 text-xs font-bold cursor-pointer hover:opacity-80" data-target="resources-content" role="button" tabindex="0" aria-controls="resources-content" style="color: var(--text-main)">
+                        <i data-lucide="chevron-down" class="w-4 h-4 mr-1 chevron-icon" aria-hidden="true"></i>
                         <span>RESOURCES</span>
                     </div>
-                    <div id="resources-content" class="group-content">
-                        <a href="https://github.com/IshikawaUta/fenrir" target="_blank" rel="noopener noreferrer" class="sidebar-item">
-                            <i class="fab fa-github w-4 h-4 mr-2 text-gray-500"></i>
+                    <div id="resources-content" class="group-content" role="group" aria-label="External resources">
+                        <a href="/playground" class="sidebar-item" role="treeitem">
+                            <i data-lucide="play-circle" class="w-4 h-4 mr-2" style="color: #10b981" aria-hidden="true"></i>
+                            <span>Playground</span>
+                        </a>
+                        <a href="/docs/swagger" class="sidebar-item" role="treeitem">
+                            <i data-lucide="file-text" class="w-4 h-4 mr-2" style="color: #3b82f6" aria-hidden="true"></i>
+                            <span>API Docs (Swagger)</span>
+                        </a>
+                        <a href="https://github.com/IshikawaUta/fenrir" target="_blank" rel="noopener noreferrer" class="sidebar-item" role="treeitem">
+                            <i class="fab fa-github w-4 h-4 mr-2" aria-hidden="true"></i>
                             <span>GitHub Repository</span>
                         </a>
-                        <a href="https://pypi.org/project/fenrir-framework/" target="_blank" rel="noopener noreferrer" class="sidebar-item">
-                            <i data-lucide="package" class="w-4 h-4 mr-2 text-orange-500 dark:text-orange-400"></i>
+                        <a href="https://pypi.org/project/fenrir-framework/" target="_blank" rel="noopener noreferrer" class="sidebar-item" role="treeitem">
+                            <i data-lucide="package" class="w-4 h-4 mr-2" style="color: #f97316" aria-hidden="true"></i>
                             <span>PyPI Package</span>
                         </a>
                     </div>
@@ -164,43 +198,45 @@
         </aside>
 
         <!-- Sidebar Overlay (Mobile) -->
-        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
 
         <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main class="flex-1 flex flex-col overflow-hidden" role="main" aria-label="Documentation content">
             
             <!-- Tabs -->
-            <div class="tabs-container">
+            <div class="tabs-container" role="tablist" aria-label="Open pages">
                 {% if current_page %}
-                <div class="tab active">
-                    <i data-lucide="{{ current_page.icon }}" class="w-3 h-3 mr-2 text-blue-500 dark:text-blue-400"></i>
+                <div class="tab active" role="tab" aria-selected="true" aria-controls="content-panel">
+                    <i data-lucide="{{ current_page.icon }}" class="w-3 h-3 mr-2" style="color: var(--accent-color)" aria-hidden="true"></i>
                     <span>{{ current_page.id }}.md</span>
-                    <i data-lucide="x" class="w-3 h-3 ml-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded cursor-pointer"></i>
+                    <i data-lucide="x" class="w-3 h-3 ml-2 hover:opacity-80 rounded cursor-pointer" aria-hidden="true"></i>
                 </div>
                 {% endif %}
             </div>
 
             <!-- Breadcrumbs / Toolbar -->
-            <div class="px-4 py-1.5 text-xs text-gray-500 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-[#1e1e1e]">
-                <div class="flex items-center">
-                    <button id="sidebarToggle" class="toggle-btn mr-2" title="Toggle Sidebar (Ctrl+B)">
-                        <i data-lucide="sidebar" class="w-4 h-4"></i>
+            <div class="px-4 py-1.5 text-xs flex items-center justify-between" role="toolbar" aria-label="Page toolbar" style="color: var(--text-main); border-bottom: 1px solid var(--border-color); background-color: var(--bg-tabs)">
+                <div class="flex items-center" role="navigation" aria-label="Breadcrumb">
+                    <button id="sidebarToggle" class="toggle-btn mr-2" title="Toggle Sidebar (Ctrl+B)" aria-label="Toggle sidebar" aria-keyshortcuts="Control+b">
+                        <i data-lucide="sidebar" class="w-4 h-4" aria-hidden="true"></i>
                     </button>
                     <span>docs</span>
-                    <i data-lucide="chevron-right" class="w-3 h-3 mx-1"></i>
-                    <span class="text-gray-700 dark:text-gray-300">{% if current_id %}{{ current_id }}.md{% else %}404.md{% endif %}</span>
+                    <i data-lucide="chevron-right" class="w-3 h-3 mx-1" aria-hidden="true"></i>
+                    <span aria-current="page">{% if current_id %}{{ current_id }}.md{% elif current_page and current_page.id %}{{ current_page.id }}.md{% else %}404.md{% endif %}</span>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <i id="shareBtn" data-lucide="share-2" class="w-4 h-4 cursor-pointer hover:text-gray-700 dark:hover:text-white" title="Share (S)"></i>
+                    <button id="shareBtn" class="hover:opacity-80 focus:outline-none" title="Share (S)" aria-label="Share page" aria-keyshortcuts="s">
+                        <i data-lucide="share-2" class="w-4 h-4" aria-hidden="true"></i>
+                    </button>
                     <div class="relative inline-block text-left">
-                        <button id="moreMenuBtn" class="flex items-center hover:text-gray-700 dark:hover:text-white focus:outline-none" title="More / Toggle Right Sidebar (M)">
-                            <i data-lucide="more-horizontal" class="w-4 h-4 cursor-pointer"></i>
+                        <button id="moreMenuBtn" class="flex items-center hover:opacity-80 focus:outline-none" title="More / Toggle Right Sidebar (M)" aria-label="More options" aria-keyshortcuts="m" aria-haspopup="true" aria-expanded="false">
+                            <i data-lucide="more-horizontal" class="w-4 h-4 cursor-pointer" aria-hidden="true"></i>
                         </button>
                         <!-- Dropdown Menu -->
-                        <div id="moreMenuDropdown" class="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white dark:bg-[#252526] border border-gray-200 dark:border-gray-700 hidden z-[150] md:hidden">
+                        <div id="moreMenuDropdown" class="absolute right-0 mt-2 w-40 rounded-md shadow-lg hidden z-[150] md:hidden" role="menu" aria-label="More options menu" style="background-color: var(--bg-sidebar); border: 1px solid var(--border-color)">
                             <div class="py-1">
-                                <button id="mobileThemeToggle" class="w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 flex items-center focus:outline-none">
-                                    <i data-lucide="sun" class="w-3.5 h-3.5 mr-2" id="mobileThemeIcon"></i>
+                                <button id="mobileThemeToggle" class="w-full text-left px-4 py-2 text-xs hover:opacity-80 flex items-center focus:outline-none" role="menuitem" style="color: var(--text-main)">
+                                    <i data-lucide="sun" class="w-3.5 h-3.5 mr-2" id="mobileThemeIcon" aria-hidden="true"></i>
                                     <span id="mobileThemeText">Light Mode</span>
                                 </button>
                             </div>
@@ -210,42 +246,42 @@
             </div>
 
             <!-- Content -->
-            <div class="flex-1 flex overflow-hidden bg-white dark:bg-[#1e1e1e]">
-                <div class="flex-1 overflow-y-auto overflow-x-auto scroll-smooth">
-                    <div class="editor-content prose dark:prose-invert">
+            <div class="flex-1 flex overflow-hidden" style="background-color: var(--bg-editor)">
+                <div class="flex-1 overflow-y-auto overflow-x-auto scroll-smooth" id="content-panel" role="tabpanel">
+                    <div class="editor-content prose dark:prose-invert" aria-label="Article content">
                         {% block content %}{% endblock %}
                     </div>
                     
                     <!-- Page Navigation -->
-                    <div class="page-nav max-w-[900px] mx-auto px-10 py-12 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center text-sm bg-white dark:bg-[#1e1e1e]">
+                    <nav class="page-nav max-w-[900px] mx-auto px-10 py-12 flex justify-between items-center text-sm" aria-label="Page navigation" style="border-top: 1px solid var(--border-color); background-color: var(--bg-editor)">
                         <div>
                             {% if prev_page %}
-                            <a href="/docs/{{ prev_page.id }}" class="group block">
-                                <div class="text-gray-500 mb-1 flex items-center group-hover:text-gray-700 dark:group-hover:text-gray-300">
-                                    <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i> Previous
+                            <a href="/docs/{{ prev_page.id }}" class="group block" rel="prev" aria-label="Previous: {{ prev_page.title }}">
+                                <div class="mb-1 flex items-center hover:opacity-80" style="color: var(--text-main)">
+                                    <i data-lucide="chevron-left" class="w-4 h-4 mr-1" aria-hidden="true"></i> Previous
                                 </div>
-                                <div class="text-blue-600 dark:text-blue-400 font-medium group-hover:text-blue-800 dark:group-hover:text-blue-350 truncate" style="max-width: 350px;">{{ prev_page.title }}</div>
+                                <div class="font-medium truncate" style="max-width: 350px; color: var(--accent-color)">{{ prev_page.title }}</div>
                             </a>
                             {% endif %}
                         </div>
                         <div class="text-right">
                             {% if next_page %}
-                            <a href="/docs/{{ next_page.id }}" class="group block">
-                                <div class="text-gray-500 mb-1 flex items-center justify-end group-hover:text-gray-700 dark:group-hover:text-gray-300">
-                                    Next <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                            <a href="/docs/{{ next_page.id }}" class="group block" rel="next" aria-label="Next: {{ next_page.title }}">
+                                <div class="mb-1 flex items-center justify-end hover:opacity-80" style="color: var(--text-main)">
+                                    Next <i data-lucide="chevron-right" class="w-4 h-4 ml-1" aria-hidden="true"></i>
                                 </div>
-                                <div class="text-blue-600 dark:text-blue-400 font-medium group-hover:text-blue-800 dark:group-hover:text-blue-350 truncate" style="max-width: 350px;">{{ next_page.title }}</div>
+                                <div class="font-medium truncate" style="max-width: 350px; color: var(--accent-color)">{{ next_page.title }}</div>
                             </a>
                             {% endif %}
                         </div>
-                    </div>
+                    </nav>
 
                     <!-- Page Meta -->
-                    <div class="page-meta max-w-[900px] mx-auto px-10 pb-20 flex flex-col md:flex-row justify-between items-start md:items-center text-[11px] text-gray-400 uppercase tracking-widest gap-4 bg-white dark:bg-[#1e1e1e]">
-                        <div class="flex flex-col space-y-2">
+                    <div class="page-meta max-w-[900px] mx-auto px-10 pb-20 flex flex-col md:flex-row justify-between items-start md:items-center text-[11px] uppercase tracking-widest gap-4" role="contentinfo" style="background-color: var(--bg-editor)">
+                        <div class="flex flex-col space-y-2" style="color: var(--text-main)">
                             {% if current_id %}
-                            <a href="https://github.com/IshikawaUta/docs-fenrir/blob/main/content/{{ current_id }}.md" target="_blank" rel="noopener noreferrer" class="hover:text-gray-700 dark:hover:text-white flex items-center">
-                                <i data-lucide="edit-3" class="w-3 h-3 mr-1.5"></i> Edit on GitHub
+                            <a href="https://github.com/IshikawaUta/docs-fenrir/blob/main/content/{{ current_id }}.md" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 flex items-center" aria-label="Edit this page on GitHub">
+                                <i data-lucide="edit-3" class="w-3 h-3 mr-1.5" aria-hidden="true"></i> Edit on GitHub
                             </a>
                             <span>Last Updated: {{ last_updated }}</span>
                             {% endif %}
@@ -257,9 +293,9 @@
                 </div>
 
                 <!-- Right Sidebar (TOC) -->
-                <aside id="rightSidebar" class="right-sidebar hidden xl:block">
-                    <div class="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-4 border-b border-gray-200 dark:border-gray-800 pb-2">On this page</div>
-                    <div class="toc text-gray-600 dark:text-gray-400">
+                <aside id="rightSidebar" class="right-sidebar hidden xl:block" role="navigation" aria-label="Table of contents">
+                    <div class="text-[10px] uppercase font-bold tracking-wider mb-4 pb-2" style="color: var(--text-main); border-bottom: 1px solid var(--border-color)">On this page</div>
+                    <div class="toc text-gray-600 dark:text-gray-400" aria-label="Table of contents">
                         {{ toc | safe }}
                     </div>
                 </aside>
@@ -268,43 +304,106 @@
     </div>
 
     <!-- Status Bar -->
-    <div class="status-bar text-white">
+    <footer class="status-bar text-white" role="contentinfo" aria-label="Status bar">
         <div class="flex items-center space-x-4">
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer">
-                <i data-lucide="git-branch" class="w-3 h-3 mr-1"></i>
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer" aria-label="Git branch: main">
+                <i data-lucide="git-branch" class="w-3 h-3 mr-1" aria-hidden="true"></i>
                 <span>main*</span>
             </div>
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile">
-                <i data-lucide="refresh-cw" class="w-3 h-3 mr-1"></i>
-                <span>v4.1.2</span>
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile" aria-label="Version 4.4.0">
+                <i data-lucide="refresh-cw" class="w-3 h-3 mr-1" aria-hidden="true"></i>
+                <span>v4.4.0</span>
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile">
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile" aria-label="Line 1, Column 1">
                 <span>Ln 1, Col 1</span>
             </div>
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile">
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile" aria-label="Encoding: UTF-8">
                 <span>UTF-8</span>
             </div>
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile">
-                <i data-lucide="check" class="w-3 h-3 mr-1"></i>
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer hidden-mobile" aria-label="Formatter: Prettier">
+                <i data-lucide="check" class="w-3 h-3 mr-1" aria-hidden="true"></i>
                 <span>Prettier</span>
             </div>
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer" id="themeToggle">
-                <i data-lucide="sun" class="w-3 h-3 mr-1" id="themeIcon"></i>
+            <button class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer" id="themeToggle" aria-label="Toggle theme" aria-keyshortcuts="t">
+                <i data-lucide="sun" class="w-3 h-3 mr-1" id="themeIcon" aria-hidden="true"></i>
                 <span id="themeText">Light Mode</span>
-            </div>
-            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer">
+            </button>
+            <div class="flex items-center hover:bg-white/10 px-2 py-1 cursor-pointer" aria-label="File type: Markdown">
                 <span>Markdown</span>
             </div>
         </div>
-    </div>
+    </footer>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" class="scroll-to-top hidden" title="Back to Top (T)">
-        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    <button id="scrollToTop" class="scroll-to-top hidden" title="Back to Top (T)" aria-label="Scroll to top" aria-keyshortcuts="t">
+        <i data-lucide="arrow-up" class="w-5 h-5" aria-hidden="true"></i>
     </button>
 
-    <script src="/static/js/main.js"></script>
+    <!-- Performance Monitoring (Core Web Vitals) -->
+    <script>
+    (function() {
+        // Report Core Web Vitals to console (for development)
+        if ('PerformanceObserver' in window) {
+            // LCP (Largest Contentful Paint)
+            new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                console.log('[Performance] LCP:', lastEntry.startTime.toFixed(0) + 'ms');
+            }).observe({ type: 'largest-contentful-paint', buffered: true });
+
+            // FID (First Input Delay)
+            new PerformanceObserver((list) => {
+                list.getEntries().forEach(entry => {
+                    console.log('[Performance] FID:', entry.processingStart - entry.startTime + 'ms');
+                });
+            }).observe({ type: 'first-input', buffered: true });
+
+            // CLS (Cumulative Layout Shift)
+            let clsValue = 0;
+            new PerformanceObserver((list) => {
+                list.getEntries().forEach(entry => {
+                    if (!entry.hadRecentInput) {
+                        clsValue += entry.value;
+                    }
+                });
+                console.log('[Performance] CLS:', clsValue.toFixed(4));
+            }).observe({ type: 'layout-shift', buffered: true });
+
+            // TTFB (Time to First Byte)
+            window.addEventListener('load', () => {
+                const navigation = performance.getEntriesByType('navigation')[0];
+                if (navigation) {
+                    console.log('[Performance] TTFB:', navigation.responseStart.toFixed(0) + 'ms');
+                    console.log('[Performance] DOMContentLoaded:', (navigation.domContentLoadedEventEnd - navigation.startTime).toFixed(0) + 'ms');
+                    console.log('[Performance] Load:', (navigation.loadEventEnd - navigation.startTime).toFixed(0) + 'ms');
+                }
+            });
+        }
+
+        // Lazy load images with IntersectionObserver
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+                        imageObserver.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '50px' });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+    })();
+    </script>
+
+    <script src="/static/js/main.js" defer></script>
 </body>
 </html>
