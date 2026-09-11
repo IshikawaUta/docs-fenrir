@@ -5,7 +5,7 @@
     --bg-sidebar: #f3f3f3;
     --bg-tabs: #e8e8e8;
     --bg-active-tab: #ffffff;
-    --border-color: #e4e4e7;
+    --border-color: #d1d5db;
     --text-main: #3f3f46;
     --text-bright: #18181b;
     --accent-color: #007acc;
@@ -39,16 +39,16 @@
     --bg-sidebar: #252526;
     --bg-tabs: #2d2d2d;
     --bg-active-tab: #1e1e1e;
-    --border-color: #333333;
-    --text-main: #cccccc;
+    --border-color: #4b5563;
+    --text-main: #d1d5db;
     --text-bright: #ffffff;
     --accent-color: #007acc;
     --status-bg: #007acc;
     --announcement-bg: linear-gradient(90deg, #1f1f1f, #2d2d2d);
     --right-sidebar-bg: #1e1e1e;
     
-    --hover-bg: rgba(255, 255, 255, 0.05);
-    --active-item-bg: rgba(255, 255, 255, 0.1);
+    --hover-bg: rgba(255, 255, 255, 0.08);
+    --active-item-bg: rgba(255, 255, 255, 0.12);
     
     --search-highlight-bg: rgba(255, 235, 59, 0.3);
     --search-highlight-border: #fbc02d;
@@ -655,6 +655,86 @@ a {
     scroll-behavior: smooth;
 }
 
+/* Accessibility: Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only.focus:not-sr-only:focus,
+.sr-only:focus {
+    position: fixed;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.5rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    z-index: 9999;
+    top: 1rem;
+    left: 1rem;
+}
+
+/* Accessibility: Focus Visible Styles */
+*:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.sidebar-item:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
+    background-color: var(--active-item-bg);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+a:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Accessibility: High Contrast Mode */
+@media (forced-colors: active) {
+    .sidebar-item.active {
+        border-left: 3px solid Highlight;
+    }
+    
+    .tab.active::after {
+        background-color: Highlight;
+    }
+    
+    .copy-button:hover {
+        border-color: Highlight;
+    }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .scroll-smooth {
+        scroll-behavior: auto;
+    }
+}
+
 /* Dynamic Code Syntax Highlighting using CSS Variables */
 .highlight .hll { background-color: var(--code-bg) }
 .highlight { 
@@ -871,5 +951,66 @@ a {
 
     .page-meta .space-x-4 > * + * {
         margin-left: 0;
+    }
+}
+
+/* ============================================
+   Performance Optimizations
+   ============================================ */
+
+/* Reduce layout shifts (CLS) */
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Contain expensive operations */
+.sidebar, .right-sidebar, .editor-content {
+    contain: layout style;
+}
+
+/* Optimize paint performance */
+.announcement-bar, .status-bar, .tabs-container {
+    will-change: transform;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+/* Avoid unnecessary repaints */
+.sidebar-item, .tab, button {
+    will-change: auto;
+}
+
+/* Optimize font rendering */
+body {
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar, .right-sidebar, .status-bar, .announcement-bar,
+    .tabs-container, .scroll-to-top, #themeToggle {
+        display: none !important;
+    }
+    body {
+        background: white;
+        color: black;
     }
 }
