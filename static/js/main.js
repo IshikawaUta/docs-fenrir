@@ -366,6 +366,90 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// Accessibility: Keyboard Navigation for Sidebar
+document.addEventListener('keydown', (e) => {
+    const sidebarLinks = Array.from(document.querySelectorAll('.sidebar-item'));
+    const currentIndex = sidebarLinks.indexOf(document.activeElement);
+    
+    // Arrow Down / Up navigation in sidebar
+    if (document.activeElement.classList.contains('sidebar-item')) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % sidebarLinks.length;
+            sidebarLinks[nextIndex].focus();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = (currentIndex - 1 + sidebarLinks.length) % sidebarLinks.length;
+            sidebarLinks[prevIndex].focus();
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            sidebarLinks[0].focus();
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            sidebarLinks[sidebarLinks.length - 1].focus();
+        }
+    }
+});
+
+// Accessibility: Close search results with Escape
+if (searchInput && searchResults) {
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchResults.classList.add('hidden');
+            searchInput.blur();
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const firstResult = searchResults.querySelector('a');
+            if (firstResult) firstResult.focus();
+        }
+    });
+    
+    // Arrow navigation in search results
+    searchResults.addEventListener('keydown', (e) => {
+        const results = Array.from(searchResults.querySelectorAll('a'));
+        const currentIndex = results.indexOf(document.activeElement);
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % results.length;
+            results[nextIndex].focus();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentIndex === 0) {
+                searchInput.focus();
+            } else {
+                const prevIndex = (currentIndex - 1 + results.length) % results.length;
+                results[prevIndex].focus();
+            }
+        } else if (e.key === 'Escape') {
+            searchResults.classList.add('hidden');
+            searchInput.focus();
+        }
+    });
+}
+
+// Accessibility: Skip to main content link
+const skipLink = document.createElement('a');
+skipLink.href = '#content-panel';
+skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded';
+skipLink.textContent = 'Skip to main content';
+document.body.insertBefore(skipLink, document.body.firstChild);
+
+// Accessibility: Announce page changes for screen readers
+const announcePageChange = () => {
+    const pageTitle = document.querySelector('[aria-current="page"]');
+    if (pageTitle) {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('role', 'status');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.className = 'sr-only';
+        announcement.textContent = `Now viewing: ${pageTitle.textContent}`;
+        document.body.appendChild(announcement);
+        setTimeout(() => announcement.remove(), 1000);
+    }
+};
+announcePageChange();
+
 function updateThemeUI(theme) {
     const mobileThemeIcon = document.getElementById('mobileThemeIcon');
     const mobileThemeText = document.getElementById('mobileThemeText');
