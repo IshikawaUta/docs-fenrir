@@ -1,4 +1,4 @@
-# Fenrir Web Framework v4.1.2
+# Fenrir Web Framework v4.4.0
 
 Fenrir is a high-performance, modern hybrid Python web framework that combines Flask, FastAPI, Falcon, and Sanic paradigms into a single unified application environment, powered by Asteri.
 
@@ -21,7 +21,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Error Handling: /docs/error-handling - Handling status codes and custom exceptions.
 - Error Handling Compatibility: /docs/error-handling-compatibility - Multi-style error handling compatibility.
 - Middleware: /docs/middleware - Request and response middleware hooks.
-- Middleware Classes: /docs/middleware-classes - CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF middleware.
+- Middleware Classes: /docs/middleware-classes - CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF, SecurityHeaders middleware.
 - Sessions: /docs/sessions - Secure cookie, in-memory, and Redis session backends.
 - Pagination: /docs/pagination - Paginated list responses.
 - Background Tasks: /docs/background-tasks - Running background workers.
@@ -36,7 +36,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - JSON Provider: /docs/json-provider - Custom JSON serialization and tagged types.
 - OpenAPI Customization: /docs/openapi-customization - Swagger UI, ReDoc, route metadata.
 
-## v4.1.2 Updates
+## v4.4.0 Updates
 - Plugin System: /docs/plugin-system - Version compatibility, dependency resolution, config validation, hot-reload, health monitoring.
 - Hook System: /docs/hook-system - Priority ordering, one-time hooks, wildcard hooks, async/sync support, middleware integration.
 - Lightweight ORM: /docs/orm - SQLite/PostgreSQL, Model metaclass, QuerySet, SQL injection prevention.
@@ -45,11 +45,15 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - GraphQL Support: /docs/graphql-support - strawberry-graphql, GraphiQL playground, type-safe resolvers.
 - gRPC Support: /docs/grpc-support - GRPCServer, GRPCService, GRPCClient, interceptors, health checking.
 - Performance & orjson: /docs/performance - orjson (7x faster), ObjectPool, ResponseCache, PerformanceMonitor.
+- Security Hardening: CSRF graceful fallback, cookie expiry, HMAC key derivation, XSS prevention, path traversal fixes.
+- Docker Support: Multi-stage builds, GHCR images, configurable entrypoint.
+- CodSpeed Benchmarks: Performance regression tracking.
 
 ## Additional Resources
 - Best Practices: /docs/best-practices - Performance, security, type hints.
 - Framework Comparison: /docs/comparison - Fenrir vs Flask vs FastAPI vs Sanic vs Falcon vs Bottle.
 - Conclusion: /docs/conclusion - Closing notes and full changelog.
+- Interactive Playground: /playground - Try Fenrir code directly in your browser.
 
 ## Technical Specifications
 - Support for FastAPI-style decorators and Pydantic validation.
@@ -57,7 +61,7 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Falcon-style class-based resources and before/after hooks.
 - Sanic-style listener hooks, background tasks, and handlers.
 - Full WSGI application mounting support.
-- Built-in CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF ASGI middleware.
+- Built-in CORS, GZip, RequestID, RateLimit, BodyLimit, CSRF, SecurityHeaders ASGI middleware.
 - Session backends: secure cookies, in-memory, Redis.
 - Pagination utilities for list endpoints.
 - WebSocket per-route timeout support.
@@ -65,8 +69,10 @@ Fenrir is a high-performance, modern hybrid Python web framework that combines F
 - Pluggable JSON serialization with tagged types.
 - Auto-generated OpenAPI 3.0.3 schema with Swagger UI and ReDoc.
 - Dev mode debug pages with stack traces and source context.
-- CSRF protection middleware with automatic token generation.
+- CSRF protection with graceful fallback, 7-day cookie expiry, HMAC key derivation.
 - Database connection pooling with retry logic.
 - HTTP/2 server push support.
 - Framework compatibility layers: Bottle, Falcon, Sanic.
+- Docker support with multi-stage builds and GHCR images.
+- 2,358 tests, 99% coverage, ruff + mypy clean.
 - Powered by high-speed Asteri ASGI server.
