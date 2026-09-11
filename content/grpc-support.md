@@ -1,15 +1,15 @@
 # gRPC Support
 
-Fenrir v4.1.2 includes built-in gRPC support for building high-performance RPC services.
+Fenrir v4.4.0 includes built-in gRPC support for building high-performance RPC services.
 
 ## Overview
 
 The gRPC integration provides:
 
 - **GRPCServer**: Thread-based gRPC server
-- **GRPCService**: Service definition with handlers
+- **GRPCService**: Service definition with `@rpc_handler` decorator
 - **GRPCClient**: Client for calling gRPC services
-- **Interceptors**: Request/response interceptors
+- **GRPCInterceptor**: Request/response interceptors
 - **Health Checking**: Built-in health check service
 
 ## Setup
@@ -28,11 +28,13 @@ from fenrir.grpc import GRPCServer, GRPCService
 
 # Define a service
 class UserService(GRPCService):
-    service_name = "user"
-    
+    service_name = "UserService"
+
+    @GRPCService.rpc_handler("GetUser")
     async def get_user(self, request, context):
         return {"id": 1, "name": "John"}
-    
+
+    @GRPCService.rpc_handler("CreateUser")
     async def create_user(self, request, context):
         return {"id": 2, "name": request.get("name")}
 
@@ -49,23 +51,25 @@ grpc_server.mount(app, port=50051)
 
 ## Defining Services
 
+Use the `@rpc_handler(method_name)` decorator to register RPC handlers:
+
 ```python
 from fenrir.grpc import GRPCService
 
 class OrderService(GRPCService):
-    service_name = "order"
-    
+    service_name = "OrderService"
+
+    @GRPCService.rpc_handler("GetOrder")
     async def get_order(self, request, context):
         order_id = request.get("id")
-        # Fetch order logic
         return {"id": order_id, "status": "pending"}
-    
+
+    @GRPCService.rpc_handler("CreateOrder")
     async def create_order(self, request, context):
-        # Create order logic
         return {"id": 1, "status": "created"}
-    
+
+    @GRPCService.rpc_handler("ListOrders")
     async def list_orders(self, request, context):
-        # List orders logic
         return {"orders": [{"id": 1}, {"id": 2}]}
 ```
 
@@ -73,18 +77,19 @@ class OrderService(GRPCService):
 
 ```python
 class MyService(GRPCService):
-    service_name = "my"
-    
+    service_name = "MyService"
+
+    @GRPCService.rpc_handler("MyMethod")
     async def my_handler(self, request, context):
         # Access metadata
         metadata = context.metadata
-        
+
         # Set status
         context.set_code(OK)
-        
+
         # Set details
         context.set_details("Success")
-        
+
         return {"result": "ok"}
 ```
 
@@ -94,7 +99,7 @@ class MyService(GRPCService):
 from fenrir.grpc import GRPCInterceptor
 
 class LoggingInterceptor(GRPCInterceptor):
-    async def intercept(self, method: str, request, context):
+    async def intercept(self, method: Callable, request, context):
         print(f"Method: {method}, Request: {request}")
         response = await method(request, context)
         print(f"Response: {response}")
@@ -120,10 +125,18 @@ server = GRPCServer()
 ```python
 from fenrir.grpc import GRPCClient
 
-# Create client
+# Using async context manager
 async with GRPCClient("localhost:50051") as client:
-    # Connection established
+    # Connection is established automatically
+    channel = client._channel
+    # Use channel for gRPC calls
     pass
+
+# Manual lifecycle
+client = GRPCClient("localhost:50051")
+await client.connect()
+# ... use client ...
+await client.close()
 ```
 
 ## Server Lifecycle
