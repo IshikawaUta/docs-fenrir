@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@39.2.8
+        run: npm install -g vercel@59.16.0
 
       - name: Deploy to Vercel
         run: vercel deploy --prod --yes
