@@ -1,0 +1,12 @@
+[run]
+source = .
+omit =
+    shibokensupport/*
+    signature_bootstrap.py
+    tests/*
+
+[report]
+show_missing = true
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__
