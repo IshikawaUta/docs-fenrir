@@ -1,8 +1,9 @@
-fenrir-framework>=4.1.2
+fenrir-framework>=4.4.0
 pydantic
-Jinja2
+Jinja2==3.1.6
 markdown
-pygments
+pygments==2.19.2
 python-dotenv
 httpx
 orjson
+sentry-sdk
