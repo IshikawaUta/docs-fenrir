@@ -1,0 +1,463 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-10 py-6 lg:py-8">
+    <h1 class="mb-4 flex items-center" style="color: var(--text-bright)">
+        <i data-lucide="play-circle" class="w-5 h-5 lg:w-8 lg:h-8 shrink-0" style="color: var(--accent-color)"></i>
+        <span class="lg:hidden font-semibold ml-1.5" style="font-size: 1.1rem">Interactive Playground</span>
+        <span class="hidden lg:inline text-3xl font-bold ml-2">Interactive Playground</span>
+    </h1>
+    <p class="mb-6 text-sm lg:text-base" style="color: var(--text-main)">
+        Try Fenrir code directly in your browser. Write Python code, click Run, and see the output instantly.
+        Powered by Pyodide (Python via WebAssembly).
+    </p>
+
+    <!-- Code Examples Selector -->
+    <div class="mb-4 flex flex-wrap gap-2">
+        <button onclick="loadExample('hello')" class="playground-example-btn">Hello World</button>
+        <button onclick="loadExample('routing')" class="playground-example-btn">Routing</button>
+        <button onclick="loadExample('middleware')" class="playground-example-btn">Middleware</button>
+        <button onclick="loadExample('response')" class="playground-example-btn">Response</button>
+        <button onclick="loadExample('validation')" class="playground-example-btn">Validation</button>
+    </div>
+
+    <!-- Editor + Output -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Code Editor -->
+        <div class="rounded-lg overflow-hidden" style="border: 1px solid var(--border-color)">
+            <div class="px-4 py-2 text-xs font-semibold flex items-center justify-between" style="background-color: var(--bg-tabs); color: var(--text-main)">
+                <span><i data-lucide="code" class="w-3.5 h-3.5 inline-block mr-1"></i> Python Code</span>
+                <button id="runBtn" onclick="runCode()" class="px-3 py-1 rounded text-white text-xs font-medium hover:opacity-90 transition" style="background-color: var(--accent-color)">
+                    <i data-lucide="play" class="w-3 h-3 inline-block mr-1"></i> Run
+                </button>
+            </div>
+            <textarea id="codeEditor" class="w-full h-64 lg:h-80 p-3 lg:p-4 text-sm font-mono resize-none focus:outline-none" style="background-color: var(--bg-editor); color: var(--text-main); border: none" spellcheck="false" aria-label="Python code editor"></textarea>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="rounded-lg overflow-hidden" style="border: 1px solid var(--border-color)">
+            <div class="px-4 py-2 text-xs font-semibold flex items-center" style="background-color: var(--bg-tabs); color: var(--text-main)">
+                <i data-lucide="terminal" class="w-3.5 h-3.5 inline-block mr-1"></i> Output
+                <span id="runStatus" class="ml-2 text-xs opacity-60"></span>
+            </div>
+            <pre id="output" class="w-full h-64 lg:h-80 p-3 lg:p-4 text-sm font-mono overflow-auto whitespace-pre-wrap" style="background-color: var(--bg-editor); color: var(--text-main); border: none" aria-live="polite" aria-label="Code output"></pre>
+        </div>
+    </div>
+
+    <!-- Info -->
+    <div class="mt-6 p-4 rounded-lg text-sm" style="background-color: var(--bg-tabs); border: 1px solid var(--border-color); color: var(--text-main)">
+        <p class="font-semibold mb-2"><i data-lucide="info" class="w-4 h-4 inline-block mr-1" style="color: var(--accent-color)"></i> How it works</p>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+            <li>Code runs in your browser using Pyodide (Python via WebAssembly)</li>
+            <li>Examples simulate Fenrir framework behavior with pure Python</li>
+            <li>First run may take 5-10 seconds to load Python runtime</li>
+            <li>For real Fenrir code, see the <a href="/docs/quick-start" class="underline" style="color: var(--accent-color)">Quick Start Guide</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Pyodide -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" defer></script>
+<script nonce="playground-v4.4.1">
+const EXAMPLES = {
+    hello: [
+'# Fenrir Hello World',
+'from fenrir import Fenrir, TextResponse',
+'',
+'app = Fenrir(title="Hello World")',
+'',
+'@app.get("/")',
+'def index():',
+'    return TextResponse("Hello, Fenrir!")',
+'',
+'# Simulate',
+'print("App created:", app.title)',
+'print("Route: GET /")',
+'print("Response:", app.routes["/"]())',
+'print()',
+'print("To run: app.run(host=\'127.0.0.1\', port=8000)")'
+    ].join('\n'),
+
+    routing: [
+'# Fenrir Routing',
+'from fenrir import Fenrir, JSONResponse, request',
+'',
+'app = Fenrir(title="Routing Demo")',
+'',
+'@app.get("/")',
+'def index():',
+'    return JSONResponse({"message": "Welcome!"})',
+'',
+'@app.get("/users/{user_id}")',
+'def get_user(user_id):',
+'    return JSONResponse({"user_id": user_id, "name": f"User {user_id}"})',
+'',
+'@app.get("/search")',
+'def search():',
+'    q = request.args.get("q", "")',
+'    return JSONResponse({"query": q, "results": []})',
+'',
+'# Simulate',
+'print("Routes defined:")',
+'for path in app.routes:',
+'    print(f"  {path}")',
+'print()',
+'print("  GET /           ->", app.routes["/"]())',
+'print("  GET /users/42   ->", app.routes["/users/{user_id}"](42))',
+'print("  GET /search?q=x ->", app.routes["/search"]())'
+    ].join('\n'),
+
+    middleware: [
+'# Fenrir Middleware',
+'from fenrir import Fenrir, TextResponse, CORSMiddleware, GZipMiddleware',
+'',
+'app = Fenrir(title="Middleware Demo")',
+'app.add_middleware(CORSMiddleware, allow_origins=["*"])',
+'app.add_middleware(GZipMiddleware, minimum_size=500)',
+'',
+'@app.get("/")',
+'async def index():',
+'    return TextResponse("Response with CORS and GZip!")',
+'',
+'print("Middleware configured:")',
+'for i, mw in enumerate(app.middleware_stack, 1):',
+'    print(f"  {i}. {type(mw).__name__}")',
+'print()',
+'print("Request flow:")',
+'print("  Client -> CORS -> GZip -> Handler -> CORS -> Client")'
+    ].join('\n'),
+
+    response: [
+'# Fenrir Response Types',
+'from fenrir import Fenrir, JSONResponse, TextResponse, Response',
+'',
+'app = Fenrir(title="Response Types")',
+'',
+'@app.get("/json")',
+'def json_resp():',
+'    return JSONResponse({"status": "success", "items": [1, 2, 3]})',
+'',
+'@app.get("/text")',
+'def text_resp():',
+'    return TextResponse("Plain text response")',
+'',
+'@app.get("/html")',
+'def html_resp():',
+'    return Response("<h1>HTML Response</h1>", content_type="text/html")',
+'',
+'print("Response types:")',
+'for path, handler in app.routes.items():',
+'    resp = handler()',
+'    print(f"  {path} -> {type(resp).__name__}")',
+'    print(f"    Content-Type: {resp.content_type}")',
+'    print(f"    Body: {resp.body[:50]}...")'
+    ].join('\n'),
+
+    validation: [
+'# Fenrir Data Validation',
+'from fenrir import Fenrir, JSONResponse',
+'from pydantic import BaseModel, Field',
+'',
+'app = Fenrir(title="Data Validation")',
+'',
+'class UserCreate(BaseModel):',
+'    name: str = Field(..., min_length=1, max_length=100)',
+'    email: str = Field(..., pattern=r"[^@]+@[^@]+")',
+'    age: int = Field(..., ge=0, le=150)',
+'',
+'@app.post("/users")',
+'def create_user(data: UserCreate):',
+'    return JSONResponse({"message": "User created", "user": data.dict()})',
+'',
+'# Test valid data',
+'print("Valid data test:")',
+'result = app.routes["/users"](data=UserCreate(name="Alice", email="alice@example.com", age=30))',
+'print(f"  Result: {result.body}")',
+'',
+'# Test invalid data',
+'print()',
+'print("Invalid data test:")',
+'try:',
+'    UserCreate(name="", email="invalid", age=-1)',
+'except Exception as e:',
+'    print(f"  Error: {e}")'
+    ].join('\n')
+};
+
+let pyodide = null;
+let pyodideLoading = false;
+let fenrirInstalled = false;
+
+const FENRIR_SETUP = [
+'import sys, types, json, re',
+'',
+'# Create fenrir module',
+'fenrir = types.ModuleType("fenrir")',
+'fenrir.__package__ = "fenrir"',
+'',
+'class _RequestContext:',
+'    def __init__(self):',
+'        self.args = {}',
+'        self.headers = {}',
+'        self.path = "/"',
+'        self.method = "GET"',
+'        self.host = "localhost"',
+'',
+'class JSONResponse:',
+'    def __init__(self, data, status=200):',
+'        self.body = json.dumps(data, indent=2)',
+'        self.content_type = "application/json"',
+'        self.status = status',
+'    def __repr__(self):',
+'        return self.body',
+'',
+'class TextResponse:',
+'    def __init__(self, text, status=200):',
+'        self.body = text',
+'        self.content_type = "text/plain"',
+'        self.status = status',
+'    def __repr__(self):',
+'        return self.body',
+'',
+'class Response:',
+'    def __init__(self, body, content_type="text/html", status=200):',
+'        self.body = body',
+'        self.content_type = content_type',
+'        self.status = status',
+'    def __repr__(self):',
+'        return self.body',
+'',
+'class HTTPNotFound(Exception):',
+'    def __init__(self, detail="Not found"):',
+'        self.detail = detail',
+'',
+'class CORSMiddleware:',
+'    def __init__(self, allow_origins=["*"], **kw):',
+'        self.origins = allow_origins',
+'    def process(self, resp):',
+'        return resp',
+'',
+'class GZipMiddleware:',
+'    def __init__(self, minimum_size=500, **kw):',
+'        self.min_size = minimum_size',
+'    def process(self, resp):',
+'        return resp',
+'',
+'class RequestIDMiddleware:',
+'    def __init__(self, **kw): pass',
+'    def process(self, resp): return resp',
+'',
+'class RateLimitMiddleware:',
+'    def __init__(self, max_requests=100, window_seconds=60, **kw): pass',
+'    def process(self, resp): return resp',
+'',
+'class BodyLimitMiddleware:',
+'    def __init__(self, max_content_length=1048576, **kw): pass',
+'    def process(self, resp): return resp',
+'',
+'class SecurityHeadersMiddleware:',
+'    def __init__(self, **kw): pass',
+'    def process(self, resp): return resp',
+'',
+'class Fenrir:',
+'    def __init__(self, title="Fenrir App", version="1.0", **kw):',
+'        self.title = title',
+'        self.version = version',
+'        self.routes = {}',
+'        self.middleware_stack = []',
+'        self.docs_url = kw.get("docs_url")',
+'        self.openapi_url = kw.get("openapi_url")',
+'    def add_middleware(self, cls, **kwargs):',
+'        self.middleware_stack.append(cls(**kwargs))',
+'    def add_route(self, path, handler, **kw):',
+'        self.routes[path] = handler',
+'    def get(self, path):',
+'        def decorator(func):',
+'            self.routes[path] = func',
+'            return func',
+'        return decorator',
+'    def post(self, path):',
+'        def decorator(func):',
+'            self.routes[path] = func',
+'            return func',
+'        return decorator',
+'    def put(self, path):',
+'        def decorator(func):',
+'            self.routes[path] = func',
+'            return func',
+'        return decorator',
+'    def delete(self, path):',
+'        def decorator(func):',
+'            self.routes[path] = func',
+'            return func',
+'        return decorator',
+'    def patch(self, path):',
+'        def decorator(func):',
+'            self.routes[path] = func',
+'            return func',
+'        return decorator',
+'    def run(self, host="127.0.0.1", port=8000, **kw):',
+'        print(f"Fenrir v{self.version} running at http://{host}:{port}")',
+'',
+'def render_template(name, **ctx):',
+'    return f"[template: {name}]"',
+'',
+'# Export to fenrir module',
+'for name, obj in list(globals().items()):',
+'    if not name.startswith("_") and name not in ("sys","types","json","re"):',
+'        setattr(fenrir, name, obj)',
+'',
+'fenrir.request = _RequestContext()',
+'sys.modules["fenrir"] = fenrir',
+'',
+'# Create pydantic mock',
+'pydantic = types.ModuleType("pydantic")',
+'pydantic.__package__ = "pydantic"',
+'',
+'class Field:',
+'    def __init__(self, default=None, min_length=None, max_length=None, pattern=None, ge=None, le=None, **kw):',
+'        self.default = default',
+'        self.min_length = min_length',
+'        self.max_length = max_length',
+'        self.pattern = pattern',
+'        self.ge = ge',
+'        self.le = le',
+'',
+'class BaseModel:',
+'    def __init__(self, **data):',
+'        for k, v in data.items():',
+'            setattr(self, k, v)',
+'    def dict(self):',
+'        return {k: v for k, v in self.__dict__.items()}',
+'    @classmethod',
+'    def validate(cls, data):',
+'        return []',
+'',
+'pydantic.Field = Field',
+'pydantic.BaseModel = BaseModel',
+'sys.modules["pydantic"] = pydantic',
+'sys.modules["pydantic.fields"] = pydantic',
+].join('\n');
+
+async function initPyodide() {
+    if (pyodide) return pyodide;
+    if (pyodideLoading) return null;
+    
+    pyodideLoading = true;
+    document.getElementById('runStatus').textContent = 'Loading Python runtime...';
+    
+    try {
+        pyodide = await loadPyodide({
+            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
+        });
+        
+        // Install mock fenrir + pydantic
+        document.getElementById('runStatus').textContent = 'Installing fenrir...';
+        pyodide.runPython(FENRIR_SETUP);
+        fenrirInstalled = true;
+        
+        document.getElementById('runStatus').textContent = 'Python ready ✓';
+        return pyodide;
+    } catch (e) {
+        document.getElementById('runStatus').textContent = 'Failed to load Python';
+        document.getElementById('output').textContent = 'Error loading Pyodide: ' + e.message;
+        return null;
+    }
+}
+
+async function runCode() {
+    const code = document.getElementById('codeEditor').value;
+    const output = document.getElementById('output');
+    const status = document.getElementById('runStatus');
+    const runBtn = document.getElementById('runBtn');
+    
+    if (!code.trim()) {
+        output.textContent = 'No code to run.';
+        return;
+    }
+    
+    runBtn.disabled = true;
+    runBtn.innerHTML = '<i data-lucide="loader" class="w-3 h-3 inline-block mr-1 animate-spin"></i> Running...';
+    status.textContent = 'Initializing...';
+    output.textContent = '';
+    
+    try {
+        const py = await initPyodide();
+        if (!py) return;
+        
+        status.textContent = 'Running...';
+        
+        // Capture stdout
+        py.runPython('import sys; from io import StringIO; sys.stdout = StringIO()');
+        
+        try {
+            py.runPython(code);
+        } catch (e) {
+            output.textContent = 'Error: ' + e.message;
+            status.textContent = 'Error';
+            return;
+        }
+        
+        const stdout = py.runPython("sys.stdout.getvalue()");
+        py.runPython("sys.stdout = sys.__stdout__");
+        
+        output.textContent = stdout || '(no output)';
+        status.textContent = 'Completed';
+    } catch (e) {
+        output.textContent = 'Error: ' + e.message;
+        status.textContent = 'Error';
+    } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<i data-lucide="play" class="w-3 h-3 inline-block mr-1"></i> Run';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+
+function loadExample(name) {
+    const code = EXAMPLES[name];
+    if (code) {
+        document.getElementById('codeEditor').value = code;
+        document.getElementById('output').textContent = '';
+        document.getElementById('runStatus').textContent = '';
+    }
+}
+
+// Keyboard shortcut: Ctrl+Enter to run
+document.addEventListener('DOMContentLoaded', () => {
+    const editor = document.getElementById('codeEditor');
+    if (editor) {
+        editor.value = EXAMPLES.hello;
+        editor.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.playground-example-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+    background-color: var(--bg-tabs);
+    border: 1px solid var(--border-color);
+}
+.playground-example-btn:hover {
+    opacity: 0.8;
+    border-color: var(--accent-color);
+}
+#codeEditor {
+    tab-size: 4;
+    line-height: 1.5;
+}
+#output {
+    line-height: 1.5;
+}
+</style>
+{% endblock %}
