@@ -1,6 +1,6 @@
 # Performance & orjson
 
-Fenrir v4.1.2 includes a performance optimization module and uses orjson for fast JSON serialization.
+Fenrir v4.4.0 includes a performance optimization module and uses orjson for fast JSON serialization.
 
 ## Overview
 
