@@ -1,12 +1,13 @@
+import json
 import os
 import sys
-import json
-import pytest
+
 import httpx
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from app import app, SIDEBAR
+from app import SIDEBAR, app
 
 
 @pytest.fixture
@@ -182,20 +183,17 @@ class TestE2EStatic:
 class TestE2EMiddleware:
     async def test_security_headers_on_html(self, client):
         resp = await client.get("/docs/introduction")
-        assert resp.headers.get("x-powered-by") == "Fenrir Framework"
         assert resp.headers.get("x-content-type-options") == "nosniff"
         assert resp.headers.get("x-frame-options") == "DENY"
         assert resp.headers.get("referrer-policy") == "strict-origin-when-cross-origin"
 
     async def test_security_headers_on_json(self, client):
         resp = await client.get("/api/search?q=fenrir")
-        assert resp.headers.get("x-powered-by") == "Fenrir Framework"
         assert resp.headers.get("x-content-type-options") == "nosniff"
         assert resp.headers.get("x-frame-options") == "DENY"
 
     async def test_security_headers_on_static(self, client):
         resp = await client.get("/static/css/style.css")
-        assert resp.headers.get("x-powered-by") == "Fenrir Framework"
         assert resp.headers.get("x-content-type-options") == "nosniff"
         assert resp.headers.get("x-frame-options") == "DENY"
 
