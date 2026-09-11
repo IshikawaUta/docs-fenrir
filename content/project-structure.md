@@ -66,11 +66,11 @@ my_fenrir_app/
 ### Example requirements.txt:
 
 ```text
-fenrir-framework==4.1.2
-pydantic==2.0.0
-jinja2==3.0.0
-asteri>=2.2.2
-pytest==7.4.0
-pytest-asyncio==0.21.0
-python-multipart==0.0.18
+fenrir-framework>=4.4.0
+pydantic>=2.0.0
+jinja2>=3.0.0
+asteri>=3.0.0
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+python-multipart>=0.0.18
 ```
