@@ -19,7 +19,7 @@ pip install -e .
 - Python 3.8 or higher
 - `pydantic>=2.0.0`
 - `jinja2>=3.0.0`
-- `asteri>=2.2.2`
+- `asteri>=3.0.0`
 - `itsdangerous>=2.0.0`
 - `python-multipart>=0.0.18`
 - `typing_extensions>=4.0.0`
