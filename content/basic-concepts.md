@@ -7,7 +7,7 @@ from fenrir import Fenrir
 
 app = Fenrir(
     title="My Application",
-    version="4.1.2",
+    version="4.4.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
@@ -20,7 +20,7 @@ app = Fenrir(
 |-----------|------|---------|-------------|
 | `import_name` | `str` | `None` | Import name for root path detection (auto-detected from caller) |
 | `title` | `str` | `"Fenrir API"` | Application title (shown in OpenAPI docs) |
-| `version` | `str` | `"4.1.2"` | Application version |
+| `version` | `str` | `"4.4.0"` | Application version |
 | `docs_url` | `str` | `"/docs"` | Swagger UI endpoint path (`None` to disable) |
 | `redoc_url` | `str` | `"/redoc"` | ReDoc endpoint path (`None` to disable) |
 | `openapi_url` | `str` | `"/openapi.json"` | OpenAPI schema endpoint path (`None` to disable) |
