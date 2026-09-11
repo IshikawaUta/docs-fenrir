@@ -12,9 +12,140 @@ Happy coding! 🐺
 
 ---
 
+### v4.4.0 — CSRF Graceful Fallback
+
+**Improvements:**
+
+- **CSRF graceful fallback** (`middleware.py`): When CSRF validation fails on POST/PUT/DELETE, the request is forwarded to the downstream app with `scope["_csrf_error"] = True` and a fresh CSRF token — previously returned a hard 403 JSON error, preventing apps from rendering retry forms with a new token
+- Apps can now check `scope.get("_csrf_error")` to detect CSRF failures and render appropriate error pages with a valid CSRF token for the user to retry
+
+---
+
+### v4.3.3 — CSRF Cookie Expiry
+
+**Improvements:**
+
+- **CSRF cookie expiry** (`middleware.py`): CSRF token cookie now includes `Max-Age=604800` (7 days) — previously cookie had no expiry, lasting indefinitely until browser close
+
+---
+
+### v4.3.2 — CSRF Token Scope Fix
+
+**Bug Fixes:**
+
+- **CSRF token missing on POST re-render** (`middleware.py`): `scope["_csrf_token"]` is now set after successful CSRF validation for unsafe methods (POST/PUT/DELETE) — previously only set for safe methods (GET/HEAD/OPTIONS), causing `{{ csrf_token }}` to be `None` when re-rendering forms after validation errors
+
+---
+
+### v4.3.1 — Bug Fixes & Publish Workflow Fix
+
+**Bug Fixes:**
+
+- **StaticFiles missing cache_control** (`static.py`): Added `cache_control` parameter to `StaticFiles.__init__` — previously hardcoded to `public, max-age=0`, now configurable (e.g., `cache_control="public, max-age=31536000, immutable"` for production)
+- **CSRF multipart/form-data** (`middleware.py`): CSRF token extraction now handles `multipart/form-data` bodies — previously only `application/x-www-form-urlencoded` was parsed, so file upload forms with embedded CSRF tokens were rejected
+
+**Tooling:**
+
+- Merged `release.yml` and `publish.yml` into single workflow — previously `GITHUB_TOKEN`-created releases didn't trigger the publish workflow, requiring manual `workflow_dispatch`
+- All 2,358 tests passing, 6 skipped
+- `ruff check fenrir/` — 0 errors
+- `mypy fenrir tests` — 0 issues
+
+---
+
+### v4.3.0 — Security Hardening & Bug Fixes
+
+**Security Fixes (Critical):**
+
+- **CSRF silent disable** (`middleware.py`): `_verify_token()` now returns `False` when `secret_key` is empty instead of `True` — previously all CSRF tokens were accepted when no secret was configured
+- **CSRF HMAC key derivation** (`middleware.py`): HMAC key is now derived via SHA-256 before signing (`sha256("fenrir-csrf:{secret}")`) instead of using the raw secret directly, strengthening protection with short keys
+- **GraphQL XSS** (`graphql.py`): GraphiQL playground `path` parameter is now escaped via `html.escape()` before JavaScript interpolation — previously an attacker controlling the mount path could inject arbitrary JS
+- **HTTP Response Splitting** (`response.py`): `set_cookie()` now strips `\r` and `\n` from cookie values to prevent header injection via crafted cookie values
+- **Path traversal via symlink** (`helpers.py`): `send_file()` now resolves symlinks with `os.path.realpath()` before serving — previously a symlink to `/etc/passwd` could be served directly
+- **CSRF body replay** (`middleware.py`): Request body is now buffered and replayed to downstream apps after CSRF validation (already fixed in previous uncommitted changes)
+
+**Security Fixes (High):**
+
+- **CORS preflight missing Vary header** (`middleware.py`): Preflight OPTIONS responses now always include `Vary: Origin` to prevent cache/proxy serving wrong CORS response to different origins
+- **Rate limiter race condition** (`middleware.py`): Redis rate limiting now uses a single atomic pipeline (ZREMRANGEBYSCORE + ZCARD + ZADD + EXPIRE) instead of two separate pipelines, eliminating the TOCTOU bypass window
+- **RedisSessionInterface async crash** (`sessions.py`): `_run_sync_or_async()` now uses `ThreadPoolExecutor` fallback instead of raising `RuntimeError` when an event loop is running — session operations now work in ASGI context
+- **Template error leak** (`templating.py`): Exception messages are no longer exposed to clients; full errors are logged server-side only
+- **Cookie injection** (`monitoring/routes.py`): Monitoring CSRF cookie now set consistently
+
+**Security Fixes (Medium):**
+
+- **Debug page exposure** (`_app_dispatch.py`): Debug page now requires both `dev_mode=True` AND `production=False` — previously any accidental `dev_mode` in production would expose source code + tracebacks
+- **Unbounded dependency caches** (`dependencies.py`): `_signature_cache` and `_type_adapter_cache` now capped at 2,048 entries with FIFO eviction to prevent memory exhaustion DoS
+- **CLI path traversal** (`cli.py`): `fenrir new` now rejects project names containing `..` to prevent writing files outside the intended directory
+- **Template cache CWD-dependent** (`templating.py`): Fallback renderer cache key now includes `CWD` to avoid stale cache when working directory changes
+- **RedisCache.get_many N+1** (`cache.py`): `None`-value existence checks now batched in a single pipeline instead of per-key round-trips
+
+**Bug Fixes (Low):**
+
+- **ObjectPool not thread-safe** (`performance.py`): Added `asyncio.Lock` and `acquire_async()`/`release_async()` methods for safe concurrent access
+- **Module-level id() cache stale after GC** (`_app_dispatch.py`): Listener async-status cache now uses composite key `(id, type.__qualname__)` to reduce stale cache hits after garbage collection
+- **Digest auth empty string** (`security.py`): Regex now matches empty quoted values (`""`) correctly; `or` precedence fixed to `(v if v != "" else v2)`
+- **Inline imports** (`security.py`, `middleware.py`): Moved `re`, `urllib.parse`, `hashlib`, `hmac` to top-level imports for cleaner dependency graph
+- **Dead _cleanup method** (`sessions.py`): Renamed `_cleanup()` to public `cleanup()` on `InMemorySessionBackend` so it can be called externally
+- **ORM update skip validation** (`orm.py`): `QuerySet.update()` now calls `_safe_table()` for SQL injection defense-in-depth
+- **SSE field injection** (`sse.py`): `id` and `event` fields are now sanitized to strip `\r` and `\n` characters
+- **ConnectionPool init race** (`pool.py`): `initialize()` now uses `asyncio.Lock` to prevent double initialization under concurrent requests
+- **.env newline injection** (`cli.py`): `_update_env_var()` now strips `\r` and `\n` from keys and values
+- **match_websocket O(n)** (`routing.py`): Websocket route matching now uses trie index (`_ws_trie`) for O(k) lookup instead of linear scan
+- **Cache.cached TOCTOU** (`cache.py`): Noted as acceptable small-window tradeoff; `exists()+get()` retained for API compatibility with `None`-valued cache entries
+- **config.from_pyfile path check** (`config.py`): Path containment check retained for relative paths; absolute paths allowed by design (documented in warning)
+
+**Tooling:**
+
+- All 2,353 tests passing, 6 skipped
+- `ruff check fenrir/` — 0 errors
+- `mypy fenrir tests` — 0 issues (148 source files)
+- Scaffold template imports sorted for ruff compliance
+
+---
+
+### v4.2.0 — Quality, Tooling & Packaging
+
+**Test Coverage (99% overall, every module at 100%):**
+
+- Added dedicated coverage suites for previously under-covered modules
+- Full suite now at **2,353 passed, 6 skipped** (up from 1,563); total coverage **99%** (8,208 stmts, 30 miss, 2,792 branches, 36 partial) with 26 modules at 100%
+- `cli.py` and `orm.py` reached 100% coverage
+
+**Bug Fixes:**
+
+- **Benchmark route syntax**: Fenrir route parameters use the bottle-style `<id>` syntax, not `{id}` — `benchmark.py` was measuring a literal-route 404 for `/users/{id}`; throughput now measured against `/users/<id>` correctly
+- **CodSpeed benchmark conftest**: `pytest_collection_modifyitems` in `tests/benchmarks/conftest.py` was applied session-wide (skipping the entire suite when `pytest-codspeed` is absent); now scoped to the `tests/benchmarks/` directory only
+- **`fenrir bench` noisy output**: benchmark runs now suppress `INFO` logging (`logging.disable(INFO)`) so only results print; httpx presence is detected via `importlib.util.find_spec` instead of a raw `import httpx`
+- **httpx dependency declaration**: `fenrir.testing` (TestClient/FenrirTestClient) imports `httpx` unconditionally but it was undeclared — added a `testing` extra (`httpx>=0.23.0`) and included httpx in the `all` extra so `fenrir[testing]`/Docker images work out of the box
+
+**Tooling & CI:**
+
+- **GitHub Actions supply-chain hardening**: all third-party actions pinned to immutable commit SHAs, `persist-credentials: false`, least-privilege `permissions`, `concurrency` groups, and explicit `timeout-minutes`
+- **`test.yml`**: split into `lint` (ruff + mypy) and `test` (coverage matrix 3.8–3.13); now generates `coverage.xml` for the Codecov upload
+- **New workflows**: `codspeed.yml`, `benchmark.yml`, `zizmor.yml`, `release.yml`, `docker.yml`
+- **`dependabot.yml`**: weekly updates for `github-actions` to keep SHA pins current
+- **CodSpeed micro-benchmarks**: added `tests/benchmarks/`
+
+**Packaging & Docker:**
+
+- **New `Dockerfile`**: multi-stage build — asteri only ships an sdist with a C extension, so wheels are built in a builder stage (gcc) and installed into a slim `python:3.13-slim` runtime; bundles `demo_app` + templates + logos so the image runs out of the box
+- **New `docker-entrypoint.sh`**: env-configurable (`APP_MODULE`, `HOST`, `PORT`, `WORKERS`) or pass a command directly
+- **`.dockerignore`** added; **`.gitignore`** hardened (SQLite databases, `.codspeed/`)
+- **`py.typed`** (PEP 561) marker added to signal inline type annotations to type-checkers
+- **`project.version`** bumped to 4.2.0
+
+**Documentation:**
+
+- README updated with current test counts, badges (Codecov, CI, tests, Docker), Docker usage, CodSpeed/benchmark/coverage sections, and the `testing` extra
+- New **`SECURITY.md`** (reporting process, supported versions, security posture) and **`CODE_OF_CONDUCT.md`** (Contributor Covenant 2.1)
+
+---
+
 ### v4.1.2 — Fix Python 3.8 CI Hang
 
 **Bug Fixes (1):**
+
 - **CRITICAL**: Fixed Python 3.8 CI job hanging indefinitely after all 1,536 tests pass
   - Root cause: `loop.run_in_executor(None, ...)` creates `ThreadPoolExecutor` attached to event loop; after loop closes, threads stay alive; Python's `atexit` handler `_python_exit` tries `t.join()` → hang
   - Solution: dedicated module-level `_thread_pool = ThreadPoolExecutor(max_workers=None)` with `atexit` + `shutdown(wait=False)` for clean exit
@@ -32,12 +163,14 @@ Happy coding! 🐺
 ### v4.1.1 — Bug Fixes, Performance & Test Coverage
 
 **Bug Fixes (90+):**
+
 - **CRITICAL (5)**: CSRF timing attack (secrets.compare_digest), CSRF cookie overwrite prevention, RateLimit deque optimization, ResponseCache infinite scan fix, context reset crash guard
 - **HIGH (9)**: CSRF HMAC token generation/verification, CORS preflight 204 response, RedisSession event loop handling, FileCache async I/O blocking, dispatch null guard, ORM executemany transaction respect, CLI ImportError handling, asteri optional dependency, forbidden path validation
 - **MEDIUM (18)**: Blueprint path validation, middleware_type ValueError, ORM table name sanitization, filename null byte removal, pagination zero/negative size protection, signals copy protection, SSE sync generator threading fix, GraphQL context non-dict handling, OpenAPI Union/Optional/List fix
 - **LOW (2)**: Response status ValueError fix, teardown error logging
 
 **Performance Optimizations (27):**
+
 - JSONResponse: orjson fallback + custom provider first
 - Request: lazy parsing headers/cookies/query params
 - Response: case-insensitive Content-Type header check
@@ -51,10 +184,12 @@ Happy coding! 🐺
 - Request: cache host property lookup (_host attribute)
 
 **Python 3.8 Compatibility:**
+
 - fenrir.compat.to_thread shim for loop.run_in_executor
 - Deferred Lock creation in RateLimitMiddleware and Database (_get_lock())
 
 **Test Coverage: 1,536 tests** (up from 1,331)
+
 - helpers.py: url_for, redirect, send_file, send_from_directory (27 tests)
 - exceptions.py: HTTP exception hierarchy (26 tests)
 - websocket.py: send_json, close, timeout, receive_text/receive_bytes (52 tests)
@@ -65,6 +200,7 @@ Happy coding! 🐺
 - cli.py: print_banner, format_col, load_app, _update_env_var (20 tests)
 
 **Release Notes:**
+
 - Version bumped to 4.1.1 after comprehensive bug fixes and test coverage improvements
 - All critical security and performance optimizations from deep-check implementation
 - Test suite expanded to cover previously untested modules with 1,536 passing tests
