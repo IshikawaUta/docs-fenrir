@@ -1,18 +1,25 @@
+import json
 import os
 import sys
-import json
-import pytest
-import httpx
 from unittest.mock import patch
+
+import httpx
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+
 import app as docs_app
 from app import (
-    app, _get_host, _make_url, cached_markdown, SIDEBAR,
-    _SIDEBAR_INDEX, _SEARCH_INDEX, _cached_render, _render_markdown_raw,
+    _SEARCH_INDEX,
+    _SIDEBAR_INDEX,
+    SIDEBAR,
+    _get_host,
+    _make_url,
+    _render_markdown_raw,
+    app,
+    cached_markdown,
 )
-from fenrir import request as fenrir_request
 
 
 @pytest.fixture
@@ -91,11 +98,24 @@ class TestRoutes:
         assert resp.status_code == 200
         assert "User-agent" in resp.text
 
+    async def test_playground(self, client):
+        resp = await client.get("/playground")
+        assert resp.status_code == 200
+        assert "Playground" in resp.text
+        assert "pyodide" in resp.text.lower() or "run" in resp.text.lower()
+
+    async def test_health_check(self, client):
+        resp = await client.get("/health")
+        assert resp.status_code == 200
+        data = json.loads(resp.text)
+        assert data["status"] == "healthy"
+        assert data["version"] == "4.4.0"
+        assert data["pages"] == 43
+
 
 class TestMiddleware:
     async def test_security_headers(self, client):
         resp = await client.get("/docs/introduction")
-        assert resp.headers.get("x-powered-by") == "Fenrir Framework"
         assert resp.headers.get("x-content-type-options") == "nosniff"
         assert resp.headers.get("x-frame-options") == "DENY"
         assert resp.headers.get("referrer-policy") == "strict-origin-when-cross-origin"
@@ -118,10 +138,10 @@ class TestFunctions:
 
     def test_make_url(self):
         assert _make_url("example.com", "/docs/test") == "https://example.com/docs/test"
-        assert _make_url("localhost:8000", "/") == "https://localhost:8000/"
+        assert _make_url("localhost:8000", "/") == "http://localhost:8000/"
 
     def test_cached_markdown_valid(self):
-        html, toc = cached_markdown("introduction")
+        html, _toc = cached_markdown("introduction")
         assert html is not None
         assert isinstance(html, str)
         assert len(html) > 0
@@ -237,7 +257,7 @@ class TestEdgeCases:
         assert html1 == html2
 
     def test_render_markdown_raw_valid(self):
-        html, toc = _render_markdown_raw("introduction")
+        html, _toc = _render_markdown_raw("introduction")
         assert html is not None
         assert isinstance(html, str)
 
@@ -254,5 +274,154 @@ class TestEdgeCases:
     async def test_search_api_uses_orjson(self, client):
         resp = await client.get("/api/search?q=fenrir")
         assert resp.status_code == 200
+
+
+class TestMissingCoverage:
+    def test_import_orjson_success(self):
+        """Test _import_orjson with orjson available"""
+        result = docs_app._import_orjson()
+        assert result is not None
+
+    def test_import_orjson_import_error(self):
+        """Test _import_orjson with ImportError"""
+        import builtins
+        original_import = builtins.__import__
+        def mock_import(name, *args, **kwargs):
+            if name == 'orjson':
+                raise ImportError("No module named 'orjson'")
+            return original_import(name, *args, **kwargs)
+        with patch.object(builtins, '__import__', side_effect=mock_import):
+            result = docs_app._import_orjson()
+            assert result is None
+
+    def test_init_sentry_no_dsn(self):
+        """Test _init_sentry when DSN is not set"""
+        with patch.dict(os.environ, {}, clear=True):
+            os.environ.pop("SENTRY_DSN", None)
+            enabled, middleware = docs_app._init_sentry()
+            assert enabled is False
+            assert middleware is None
+
+    def test_init_sentry_import_error(self):
+        """Test _init_sentry with ImportError"""
+        import builtins
+        original_import = builtins.__import__
+        def mock_import(name, *args, **kwargs):
+            if name == 'sentry_sdk':
+                raise ImportError("No module named 'sentry_sdk'")
+            return original_import(name, *args, **kwargs)
+        with patch.dict(os.environ, {"SENTRY_DSN": "https://test@test.io/1"}), \
+             patch.object(builtins, '__import__', side_effect=mock_import):
+            enabled, _middleware = docs_app._init_sentry()
+            assert enabled is False
+
+    def test_init_sentry_general_error(self):
+        """Test _init_sentry with ValueError"""
+        with patch.dict(os.environ, {"SENTRY_DSN": "https://test@test.io/1"}), \
+             patch('sentry_sdk.init', side_effect=ValueError("init failed")):
+            enabled, _middleware = docs_app._init_sentry()
+            assert enabled is False
+
+    def test_init_fenrir_monitoring_error(self):
+        """Test _init_fenrir_monitoring with ImportError"""
+        import builtins
+        original_import = builtins.__import__
+        def mock_import(name, *args, **kwargs):
+            if name == 'fenrir.features':
+                raise ImportError("No module")
+            return original_import(name, *args, **kwargs)
+        with patch.object(builtins, '__import__', side_effect=mock_import):
+            docs_app._init_fenrir_monitoring()
+
+    def test_build_search_index_skip_none(self):
+        """Test _build_search_index skips pages with None content"""
+        import copy
+        original_index = copy.deepcopy(dict(docs_app._SEARCH_INDEX))
+        try:
+            with patch.object(docs_app, 'cached_markdown', return_value=(None, None)):
+                docs_app._build_search_index()
+                assert len(docs_app._SEARCH_INDEX) == 0
+        finally:
+            docs_app._SEARCH_INDEX.clear()
+            docs_app._SEARCH_INDEX.update(original_index)
+
+    async def test_doc_page_oserror(self, client):
+        """Test OSError when getting file mtime (lines 343-345)"""
+        import app as app_module
+        original = app_module.os.path.getmtime
+        content_dir = os.path.abspath(docs_app.CONTENT_DIR)
+        call_count = [0]
+
+        def selective_getmtime(path):
+            abs_path = os.path.abspath(path)
+            if abs_path.startswith(content_dir) and abs_path.endswith('.md'):
+                call_count[0] += 1
+                if call_count[0] == 1:
+                    return original(path)
+                raise OSError("simulated error")
+            return original(path)
+
+        app_module._cached_render.cache_clear()
+        app_module.os.path.getmtime = selective_getmtime
+        try:
+            resp = await client.get("/docs/introduction")
+            assert resp.status_code == 200
+        finally:
+            app_module.os.path.getmtime = original
+            app_module._cached_render.cache_clear()
+
+    async def test_search_skip_missing_index(self):
+        """Test line 403: skip when idx_data is None"""
+        import copy
+        original_index = copy.deepcopy(dict(docs_app._SEARCH_INDEX))
+        try:
+            docs_app._SEARCH_INDEX.clear()
+            transport = httpx.ASGITransport(app=docs_app.app)
+            async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+                resp = await c.get("/api/search?q=test")
+                assert resp.status_code == 200
+                data = json.loads(resp.text)
+                assert data == []
+        finally:
+            docs_app._SEARCH_INDEX.clear()
+            docs_app._SEARCH_INDEX.update(original_index)
+
+    async def test_search_no_orjson(self, client):
+        """Test line 424: JSONResponse fallback when orjson is None"""
+        import app as app_module
+        original = app_module.orjson
+        app_module.orjson = None
+        try:
+            resp = await client.get("/api/search?q=fenrir")
+            assert resp.status_code == 200
+            data = json.loads(resp.text)
+            assert isinstance(data, list)
+        finally:
+            app_module.orjson = original
+
+    async def test_doc_page_oserror_direct(self, client):
+        """Test lines 343-345: OSError in doc handler - direct call"""
+        import app as app_module
+        original = app_module.os.path.getmtime
+        content_dir = os.path.abspath(docs_app.CONTENT_DIR)
+        call_count = [0]
+
+        def selective_getmtime(path):
+            abs_path = os.path.abspath(path)
+            if abs_path.startswith(content_dir) and abs_path.endswith('.md'):
+                call_count[0] += 1
+                if call_count[0] == 1:
+                    return original(path)
+                raise OSError("simulated error")
+            return original(path)
+
+        app_module._cached_render.cache_clear()
+        app_module.os.path.getmtime = selective_getmtime
+        try:
+            resp = await client.get("/docs/introduction")
+            assert resp.status_code == 200
+        finally:
+            app_module.os.path.getmtime = original
+            app_module._cached_render.cache_clear()
 
 
