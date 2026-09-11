@@ -134,9 +134,63 @@ app.add_middleware(CSRFMiddleware, secret_key="my-secret")
 
 When `auto_generate=True` (default), a CSRF token cookie is injected into every safe-method response. The client must read this cookie and send it back in the `X-CSRF-Token` header for subsequent state-changing requests.
 
+**Graceful Fallback (v4.4.0):**
+When CSRF validation fails, the request is forwarded to the downstream app with `scope["_csrf_error"] = True` and a fresh CSRF token — instead of returning a hard 403 error. This allows apps to render retry forms with a valid token:
+
+```python
+@app.middleware("response")
+async def handle_csrf_error(req, resp):
+    if req.scope.get("_csrf_error"):
+        # Render error page with fresh CSRF token for retry
+        resp.body = render_template("csrf_error.html",
+            csrf_token=req.scope.get("_csrf_token", ""))
+```
+
+**Security Features (v4.3.0):**
+- HMAC key derivation via SHA-256 (`sha256("fenrir-csrf:{secret}")`) for stronger protection with short keys
+- `_verify_token()` returns `False` when `secret_key` is empty (previously accepted all tokens)
+- Token cookie includes `Max-Age=604800` (7 days) expiry
+- Handles `multipart/form-data` bodies (file upload forms with embedded CSRF tokens)
+
 **Parameters:**
 
 - `secret_key`: Secret key for token generation (default: `""`)
 - `cookie_name`: Name of the CSRF cookie (default: `"_csrf_token"`)
 - `header_name`: Header name for the CSRF token (default: `"X-CSRF-Token"`)
 - `auto_generate`: Auto-inject CSRF cookie on safe methods (default: `True`)
+- `safe_methods`: Custom frozenset of safe HTTP methods (default: `None` — uses `{"GET", "HEAD", "OPTIONS"}`)
+
+### Security Headers Middleware
+
+Adds security-related HTTP headers to all responses. Existing response headers are never overwritten.
+
+```python
+from fenrir.middleware import SecurityHeadersMiddleware
+
+app.add_middleware(SecurityHeadersMiddleware)
+```
+
+**Parameters:**
+
+- `hsts_max_age`: HSTS max-age in seconds (default: `31536000`). Set to `None` to disable HSTS.
+- `hsts_include_subdomains`: Include subdomains in HSTS (default: `True`)
+- `frame_options`: X-Frame-Options value (default: `"DENY"`)
+- `content_type_options`: X-Content-Type-Options value (default: `"nosniff"`)
+- `referrer_policy`: Referrer-Policy value (default: `"no-referrer"`)
+- `permissions_policy`: Permissions-Policy value (default: `"geolocation=(), microphone=(), camera=()"`)
+- `cross_origin_opener_policy`: Cross-Origin-Opener-Policy value (default: `"same-origin"`)
+- `csp`: Content-Security-Policy value (default: `None`)
+- `xss_protection`: X-XSS-Protection value (default: `None`)
+
+**Examples:**
+
+```python
+# Default security headers
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Custom CSP
+app.add_middleware(SecurityHeadersMiddleware, csp="default-src 'self'")
+
+# Disable HSTS
+app.add_middleware(SecurityHeadersMiddleware, hsts_max_age=None)
+```
