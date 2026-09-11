@@ -1,6 +1,6 @@
 # Lightweight ORM
 
-Fenrir v4.1.2 includes a lightweight async ORM for SQLite and PostgreSQL databases.
+Fenrir v4.4.0 includes a lightweight async ORM for SQLite and PostgreSQL databases.
 
 ## Overview
 
@@ -8,7 +8,7 @@ The ORM provides:
 
 - **SQLite & PostgreSQL**: Support for both databases
 - **Model with Metaclass**: Declarative model definition
-- **Field Types**: Integer, String, Float, Boolean, Datetime, JSON
+- **Field Types**: Integer, String, Text, Float, Boolean, Datetime, JSONField
 - **QuerySet**: Chainable queries with filters, ordering, limit, offset
 - **SQL Injection Prevention**: Parameterized queries throughout
 - **Async Support**: Fully async database operations
@@ -135,7 +135,7 @@ exists = await User.filter(username="john").exists()
 fields.Integer(primary_key=True)      # Auto-increment integer
 fields.Integer(default=0)             # Integer with default
 fields.String(max_length=100)         # VARCHAR(100)
-fields.Text()                         # TEXT
+fields.Text()                         # TEXT (unlimited length)
 fields.Float(default=0.0)            # FLOAT
 fields.Boolean(default=False)        # BOOLEAN
 fields.Datetime(auto_now_add=True)   # Auto-set on create
